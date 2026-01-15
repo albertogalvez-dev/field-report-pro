@@ -29,5 +29,5 @@ val CritPriority = Color(0xFFB71C1C)
 
 val DarkSurfaceElevated = Color(0xFF2B333A)
 val DarkOutline = Color(0xFF3A434B)
-val SoftDivider = Color(0xFFD9DEE3)
+val SoftDivider = Color(0xFFD3D9E1)
 val DarkSoftDivider = Color(0xFF333B43)

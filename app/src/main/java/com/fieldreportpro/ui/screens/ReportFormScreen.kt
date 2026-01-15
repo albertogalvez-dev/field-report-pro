@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -58,6 +59,9 @@ import com.fieldreportpro.ui.components.AddPhotoBottomSheet
 import com.fieldreportpro.ui.components.AttachmentRow
 import com.fieldreportpro.ui.components.OutlinePillButton
 import com.fieldreportpro.ui.components.PrimaryPillButton
+import com.fieldreportpro.ui.components.standardCardBorder
+import com.fieldreportpro.ui.components.standardCardColors
+import com.fieldreportpro.ui.components.standardCardElevation
 import com.fieldreportpro.ui.components.rememberAttachmentPicker
 import com.fieldreportpro.ui.sample.DemoAssets
 import com.fieldreportpro.ui.theme.AppDimens
@@ -204,228 +208,237 @@ internal fun ReportFormContent(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier) {
-        LazyColumn(
-            modifier = Modifier.padding(horizontal = AppDimens.Spacing16),
-            contentPadding = PaddingValues(top = AppDimens.Spacing16, bottom = 140.dp),
-            verticalArrangement = Arrangement.spacedBy(AppDimens.Spacing16)
-        ) {
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    TextButton(onClick = onCancel) {
-                        Text(text = "Cancel", color = PrimaryGreen)
-                    }
-                    Text(
-                        text = "New Field Report",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Box(modifier = Modifier.width(64.dp))
-                }
-            }
-            item {
-                FormCard {
-                    Text(text = "Report Title", style = AppTextStyles.CardTitle)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(
-                        value = reportTitle,
-                        onValueChange = onReportTitleChange,
-                        placeholder = { Text(text = "Enter report title") },
-                        isError = showError && reportTitle.isBlank(),
+    Surface(
+        modifier = modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier.padding(horizontal = AppDimens.Spacing16),
+                contentPadding = PaddingValues(top = AppDimens.Spacing16, bottom = 140.dp),
+                verticalArrangement = Arrangement.spacedBy(AppDimens.Spacing16)
+            ) {
+                item {
+                    Row(
                         modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = PrimaryGreen,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                            errorBorderColor = MaterialTheme.colorScheme.error
-                        )
-                    )
-                    if (showError && reportTitle.isBlank()) {
-                        Text(
-                            text = "Report title is required.",
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text(
-                        text = "Category",
-                        style = AppTextStyles.Body,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Box {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(
-                                    MaterialTheme.colorScheme.surfaceVariant,
-                                    RoundedCornerShape(12.dp)
-                                )
-                                .padding(horizontal = 12.dp, vertical = 10.dp)
-                                .clickable { onCategoryExpandedChange(true) },
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(text = selectedCategory, modifier = Modifier.weight(1f))
-                            Icon(imageVector = Icons.Outlined.ArrowDropDown, contentDescription = null)
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        TextButton(onClick = onCancel) {
+                            Text(text = "Cancel", color = PrimaryGreen)
                         }
-                        DropdownMenu(
-                            expanded = categoryExpanded,
-                            onDismissRequest = { onCategoryExpandedChange(false) }
-                        ) {
-                            listOf("Safety", "Maintenance", "Observation", "Quality").forEach { option ->
-                                DropdownMenuItem(
-                                    text = { Text(text = option) },
-                                    leadingIcon = {
-                                        if (option == selectedCategory) {
-                                            Icon(
-                                                imageVector = Icons.Outlined.Check,
-                                                contentDescription = null,
-                                                tint = PrimaryGreen
-                                            )
+                        Text(
+                            text = "New Field Report",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Box(modifier = Modifier.width(64.dp))
+                    }
+                }
+                item {
+                    FormCard {
+                        Text(text = "Report Title", style = AppTextStyles.CardTitle)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = reportTitle,
+                            onValueChange = onReportTitleChange,
+                            placeholder = { Text(text = "Enter report title") },
+                            isError = showError && reportTitle.isBlank(),
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = PrimaryGreen,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                errorBorderColor = MaterialTheme.colorScheme.error
+                            )
+                        )
+                        if (showError && reportTitle.isBlank()) {
+                            Text(
+                                text = "Report title is required.",
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = "Category",
+                            style = AppTextStyles.Body,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Box {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        MaterialTheme.colorScheme.surfaceVariant,
+                                        RoundedCornerShape(12.dp)
+                                    )
+                                    .padding(horizontal = 12.dp, vertical = 10.dp)
+                                    .clickable { onCategoryExpandedChange(true) },
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = selectedCategory, modifier = Modifier.weight(1f))
+                                Icon(imageVector = Icons.Outlined.ArrowDropDown, contentDescription = null)
+                            }
+                            DropdownMenu(
+                                expanded = categoryExpanded,
+                                onDismissRequest = { onCategoryExpandedChange(false) }
+                            ) {
+                                listOf("Safety", "Maintenance", "Observation", "Quality").forEach { option ->
+                                    DropdownMenuItem(
+                                        text = { Text(text = option) },
+                                        leadingIcon = {
+                                            if (option == selectedCategory) {
+                                                Icon(
+                                                    imageVector = Icons.Outlined.Check,
+                                                    contentDescription = null,
+                                                    tint = PrimaryGreen
+                                                )
+                                            }
+                                        },
+                                        onClick = {
+                                            onCategoryChange(option)
+                                            onCategoryExpandedChange(false)
                                         }
-                                    },
-                                    onClick = {
-                                        onCategoryChange(option)
-                                        onCategoryExpandedChange(false)
-                                    }
-                                )
+                                    )
+                                }
                             }
                         }
                     }
                 }
-            }
-            item {
-                FormCard {
-                    Text(text = "Priority Level", style = AppTextStyles.CardTitle)
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        PrioritySegment(
-                            label = "Low",
-                            selected = selectedPriority == PriorityUi.Low,
-                            onClick = { onPriorityChange(PriorityUi.Low) },
-                            modifier = Modifier.weight(1f)
-                        )
-                        PrioritySegment(
-                            label = "Med",
-                            selected = selectedPriority == PriorityUi.Med,
-                            onClick = { onPriorityChange(PriorityUi.Med) },
-                            modifier = Modifier.weight(1f)
-                        )
-                        PrioritySegment(
-                            label = "High",
-                            selected = selectedPriority == PriorityUi.High,
-                            onClick = { onPriorityChange(PriorityUi.High) },
-                            modifier = Modifier.weight(1f)
-                        )
-                        PrioritySegment(
-                            label = "Crit",
-                            selected = selectedPriority == PriorityUi.Crit,
-                            onClick = { onPriorityChange(PriorityUi.Crit) },
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                }
-            }
-            item {
-                FormCard {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = "Location", style = AppTextStyles.CardTitle)
-                        TextButton(onClick = { }) {
-                            Text(text = "USE CURRENT", color = PrimaryGreen)
+                item {
+                    FormCard {
+                        Text(text = "Priority Level", style = AppTextStyles.CardTitle)
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            PrioritySegment(
+                                label = "Low",
+                                selected = selectedPriority == PriorityUi.Low,
+                                onClick = { onPriorityChange(PriorityUi.Low) },
+                                modifier = Modifier.weight(1f)
+                            )
+                            PrioritySegment(
+                                label = "Med",
+                                selected = selectedPriority == PriorityUi.Med,
+                                onClick = { onPriorityChange(PriorityUi.Med) },
+                                modifier = Modifier.weight(1f)
+                            )
+                            PrioritySegment(
+                                label = "High",
+                                selected = selectedPriority == PriorityUi.High,
+                                onClick = { onPriorityChange(PriorityUi.High) },
+                                modifier = Modifier.weight(1f)
+                            )
+                            PrioritySegment(
+                                label = "Crit",
+                                selected = selectedPriority == PriorityUi.Crit,
+                                onClick = { onPriorityChange(PriorityUi.Crit) },
+                                modifier = Modifier.weight(1f)
+                            )
                         }
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(
-                        value = "34.0522 N, 118.2437 W",
-                        onValueChange = { },
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = false
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(140.dp)
-                            .background(
-                                MaterialTheme.colorScheme.surfaceVariant,
-                                RoundedCornerShape(16.dp)
+                }
+                item {
+                    FormCard {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = "Location", style = AppTextStyles.CardTitle)
+                            TextButton(onClick = { }) {
+                                Text(text = "USE CURRENT", color = PrimaryGreen)
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = "34.0522 N, 118.2437 W",
+                            onValueChange = { },
+                            modifier = Modifier.fillMaxWidth(),
+                            enabled = false
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(140.dp)
+                                .background(
+                                    MaterialTheme.colorScheme.surfaceVariant,
+                                    RoundedCornerShape(16.dp)
+                                )
+                        ) {
+                            AsyncImage(
+                                model = DemoAssets.mapPreviewUri,
+                                contentDescription = null,
+                                modifier = Modifier.matchParentSize(),
+                                contentScale = androidx.compose.ui.layout.ContentScale.Crop
                             )
-                    ) {
-                        AsyncImage(
-                            model = DemoAssets.mapPreviewUri,
-                            contentDescription = null,
-                            modifier = Modifier.matchParentSize(),
-                            contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                            SurfaceLabel(text = "Zone 4, Sector B")
+                        }
+                    }
+                }
+                item {
+                    FormCard {
+                        Text(text = "Description", style = AppTextStyles.CardTitle)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = description,
+                            onValueChange = onDescriptionChange,
+                            placeholder = { Text(text = "Add a detailed description...") },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(120.dp)
                         )
-                        SurfaceLabel(text = "Zone 4, Sector B")
+                    }
+                }
+                item {
+                    FormCard {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = "Attachments", style = AppTextStyles.CardTitle)
+                            Text(
+                                text = "$attachmentsCount Files",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                        AttachmentRow(
+                            attachments = attachments,
+                            onAddClick = onAddAttachment
+                        )
                     }
                 }
             }
-            item {
-                FormCard {
-                    Text(text = "Description", style = AppTextStyles.CardTitle)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(
-                        value = description,
-                        onValueChange = onDescriptionChange,
-                        placeholder = { Text(text = "Add a detailed description...") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(120.dp)
-                    )
-                }
-            }
-            item {
-                FormCard {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = "Attachments", style = AppTextStyles.CardTitle)
-                        Text(
-                            text = "$attachmentsCount Files",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    AttachmentRow(
-                        attachments = attachments,
-                        onAddClick = onAddAttachment
-                    )
-                }
-            }
-        }
 
-        BottomActionBar(
-            onSaveDraft = onSaveDraft,
-            onQueueSync = onQueueSync,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 104.dp)
-        )
+            BottomActionBar(
+                onSaveDraft = onSaveDraft,
+                onQueueSync = onQueueSync,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 104.dp)
+            )
+        }
     }
 }
 
 @Composable
 private fun FormCard(content: @Composable ColumnScope.() -> Unit) {
+    val cardColors = standardCardColors()
+    val cardElevation = standardCardElevation()
+    val cardBorder = standardCardBorder()
     Card(
         shape = RoundedCornerShape(AppDimens.Corner20),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        colors = cardColors,
+        elevation = cardElevation,
+        border = cardBorder,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(

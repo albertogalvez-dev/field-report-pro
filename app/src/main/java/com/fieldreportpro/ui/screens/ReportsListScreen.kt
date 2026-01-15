@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -65,51 +67,56 @@ internal fun ReportsListContent(
     showDemoToggle: Boolean,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(AppDimens.Spacing16),
-        verticalArrangement = Arrangement.spacedBy(AppDimens.Spacing16)
+    Surface(
+        modifier = modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
-        SearchBar(
-            query = uiState.query,
-            placeholder = "Search reports, IDs, or tags...",
-            onQueryChange = onQueryChange
-        )
-        FilterChipRow(
-            filters = uiState.filters,
-            onToggle = onToggleFilter
-        )
-        if (uiState.reports.isEmpty()) {
-            Spacer(modifier = Modifier.height(24.dp))
-            EmptyState(
-                modifier = Modifier.fillMaxSize(),
-                onCreateReport = onCreateReport
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(AppDimens.Spacing16),
+            verticalArrangement = Arrangement.spacedBy(AppDimens.Spacing16)
+        ) {
+            SearchBar(
+                query = uiState.query,
+                placeholder = "Search reports, IDs, or tags...",
+                onQueryChange = onQueryChange
             )
-        } else {
-            LazyColumn(
-                contentPadding = PaddingValues(bottom = 120.dp),
-                verticalArrangement = Arrangement.spacedBy(AppDimens.Spacing12)
-            ) {
-                items(uiState.reports) { report ->
-                    ReportActivityCard(
-                        report = report,
-                        onClick = { onOpenReport(report.id) }
-                    )
+            FilterChipRow(
+                filters = uiState.filters,
+                onToggle = onToggleFilter
+            )
+            if (uiState.reports.isEmpty()) {
+                Spacer(modifier = Modifier.height(24.dp))
+                EmptyState(
+                    modifier = Modifier.fillMaxSize(),
+                    onCreateReport = onCreateReport
+                )
+            } else {
+                LazyColumn(
+                    contentPadding = PaddingValues(bottom = 120.dp),
+                    verticalArrangement = Arrangement.spacedBy(AppDimens.Spacing12)
+                ) {
+                    items(uiState.reports) { report ->
+                        ReportActivityCard(
+                            report = report,
+                            onClick = { onOpenReport(report.id) }
+                        )
+                    }
                 }
             }
-        }
-        if (showDemoToggle) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(text = "Demo mode: show empty list")
-                Switch(
-                    checked = uiState.demoEmptyState,
-                    onCheckedChange = onToggleDemoEmptyState
-                )
+            if (showDemoToggle) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Demo mode: show empty list")
+                    Switch(
+                        checked = uiState.demoEmptyState,
+                        onCheckedChange = onToggleDemoEmptyState
+                    )
+                }
             }
         }
     }

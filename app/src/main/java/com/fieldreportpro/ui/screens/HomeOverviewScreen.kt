@@ -22,6 +22,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -81,93 +82,98 @@ internal fun HomeOverviewContent(
     onOpenReport: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
-        LazyColumn(
-            contentPadding = PaddingValues(
-                start = AppDimens.Spacing16,
-                end = AppDimens.Spacing16,
-                top = AppDimens.Spacing16,
-                bottom = 120.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(AppDimens.Spacing16)
-        ) {
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Reports",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        IconButton(onClick = { }) {
-                            Icon(imageVector = Icons.Outlined.Search, contentDescription = null)
-                        }
-                        Box {
-                            IconButton(onClick = { }) {
-                                Icon(imageVector = Icons.Outlined.FilterList, contentDescription = null)
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .size(8.dp)
-                                    .align(Alignment.TopEnd)
-                                    .clip(androidx.compose.foundation.shape.CircleShape)
-                                    .background(PrimaryGreen)
-                            )
-                        }
-                    }
-                }
-            }
-            if (showOfflineBanner) {
+    Surface(
+        modifier = modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                contentPadding = PaddingValues(
+                    start = AppDimens.Spacing16,
+                    end = AppDimens.Spacing16,
+                    top = AppDimens.Spacing16,
+                    bottom = 120.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(AppDimens.Spacing16)
+            ) {
                 item {
-                    OfflineBannerCard(onSyncNow = { })
-                }
-            }
-            item {
-                Column(verticalArrangement = Arrangement.spacedBy(AppDimens.Spacing16)) {
-                    SummaryCardLarge(
-                        title = "Synced Reports",
-                        count = summaryCount
-                    )
-                    Row(horizontalArrangement = Arrangement.spacedBy(AppDimens.Spacing16)) {
-                        DraftSummaryCard(modifier = Modifier.weight(1f), count = draftCount)
-                        PendingSummaryCard(modifier = Modifier.weight(1f), count = pendingCount)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Reports",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            IconButton(onClick = { }) {
+                                Icon(imageVector = Icons.Outlined.Search, contentDescription = null)
+                            }
+                            Box {
+                                IconButton(onClick = { }) {
+                                    Icon(imageVector = Icons.Outlined.FilterList, contentDescription = null)
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .size(8.dp)
+                                        .align(Alignment.TopEnd)
+                                        .clip(androidx.compose.foundation.shape.CircleShape)
+                                        .background(PrimaryGreen)
+                                )
+                            }
+                        }
                     }
                 }
-            }
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "Recent Activity", style = MaterialTheme.typography.titleMedium)
-                    Text(text = "View All", color = PrimaryGreen, style = MaterialTheme.typography.labelLarge)
+                if (showOfflineBanner) {
+                    item {
+                        OfflineBannerCard(onSyncNow = { })
+                    }
+                }
+                item {
+                    Column(verticalArrangement = Arrangement.spacedBy(AppDimens.Spacing16)) {
+                        SummaryCardLarge(
+                            title = "Synced Reports",
+                            count = summaryCount
+                        )
+                        Row(horizontalArrangement = Arrangement.spacedBy(AppDimens.Spacing16)) {
+                            DraftSummaryCard(modifier = Modifier.weight(1f), count = draftCount)
+                            PendingSummaryCard(modifier = Modifier.weight(1f), count = pendingCount)
+                        }
+                    }
+                }
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = "Recent Activity", style = MaterialTheme.typography.titleMedium)
+                        Text(text = "View All", color = PrimaryGreen, style = MaterialTheme.typography.labelLarge)
+                    }
+                }
+                items(recentActivity) { report ->
+                    ReportActivityCard(
+                        report = report,
+                        onClick = { onOpenReport(report.id) }
+                    )
                 }
             }
-            items(recentActivity) { report ->
-                ReportActivityCard(
-                    report = report,
-                    onClick = { onOpenReport(report.id) }
+
+            FloatingActionButton(
+                onClick = onCreateReport,
+                containerColor = PrimaryGreen,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(24.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Add,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
-        }
-
-        FloatingActionButton(
-            onClick = onCreateReport,
-            containerColor = PrimaryGreen,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(24.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Add,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary
-            )
         }
     }
 }

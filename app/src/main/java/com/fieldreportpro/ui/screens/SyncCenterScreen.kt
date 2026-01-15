@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,7 +22,6 @@ import androidx.compose.material.icons.outlined.CloudSync
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -44,6 +44,9 @@ import com.fieldreportpro.domain.ui_models.SyncItemStatus
 import com.fieldreportpro.domain.ui_models.SyncQueueItemUi
 import com.fieldreportpro.domain.ui_models.SyncUiState
 import com.fieldreportpro.ui.components.PrimaryPillButton
+import com.fieldreportpro.ui.components.standardCardBorder
+import com.fieldreportpro.ui.components.standardCardColors
+import com.fieldreportpro.ui.components.standardCardElevation
 import com.fieldreportpro.ui.theme.AppDimens
 import com.fieldreportpro.ui.theme.FieldReportTheme
 import com.fieldreportpro.ui.theme.PrimaryGreen
@@ -73,95 +76,104 @@ internal fun SyncCenterContent(
     onRetry: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier) {
-        LazyColumn(
-            contentPadding = PaddingValues(
-                start = AppDimens.Spacing16,
-                end = AppDimens.Spacing16,
-                top = AppDimens.Spacing16,
-                bottom = 140.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(AppDimens.Spacing16)
-        ) {
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = onBack) {
-                        Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = null)
-                    }
-                    Text(
-                        text = "Sync Center",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Spacer(modifier = Modifier.size(48.dp))
-                }
-            }
-            item {
-                Card(
-                    shape = androidx.compose.foundation.shape.RoundedCornerShape(AppDimens.Corner20),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(AppDimens.Spacing16),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+    Surface(
+        modifier = modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                contentPadding = PaddingValues(
+                    start = AppDimens.Spacing16,
+                    end = AppDimens.Spacing16,
+                    top = AppDimens.Spacing16,
+                    bottom = 140.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(AppDimens.Spacing16)
+            ) {
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .size(8.dp)
-                                    .background(
-                                        if (uiState.systemOnline) PrimaryGreen else MaterialTheme.colorScheme.error,
-                                        androidx.compose.foundation.shape.CircleShape
-                                    )
-                            )
-                            Spacer(modifier = Modifier.size(8.dp))
+                        IconButton(onClick = onBack) {
+                            Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = null)
+                        }
+                        Text(
+                            text = "Sync Center",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Spacer(modifier = Modifier.size(48.dp))
+                    }
+                }
+                item {
+                    val cardColors = standardCardColors()
+                    val cardElevation = standardCardElevation()
+                    val cardBorder = standardCardBorder()
+                    Card(
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(AppDimens.Corner20),
+                        colors = cardColors,
+                        elevation = cardElevation,
+                        border = cardBorder
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(AppDimens.Spacing16),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(8.dp)
+                                        .background(
+                                            if (uiState.systemOnline) PrimaryGreen else MaterialTheme.colorScheme.error,
+                                            androidx.compose.foundation.shape.CircleShape
+                                        )
+                                )
+                                Spacer(modifier = Modifier.size(8.dp))
+                                Text(
+                                    text = if (uiState.systemOnline) "System Online" else "System Offline",
+                                    style = MaterialTheme.typography.titleSmall
+                                )
+                            }
+                            Text(text = uiState.lastSyncLabel, style = MaterialTheme.typography.bodySmall)
+                            Text(text = uiState.dataUsageLabel, style = MaterialTheme.typography.bodySmall)
+                            PrimaryPillButton(text = "Sync now", onClick = onSyncNow)
+                        }
+                    }
+                }
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = "Queued items", style = MaterialTheme.typography.titleMedium)
+                        Surface(
+                            shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
+                            color = PrimaryGreen.copy(alpha = 0.15f)
+                        ) {
                             Text(
-                                text = if (uiState.systemOnline) "System Online" else "System Offline",
-                                style = MaterialTheme.typography.titleSmall
+                                text = uiState.queuedRemainingLabel,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                                color = PrimaryGreen,
+                                style = MaterialTheme.typography.labelMedium
                             )
                         }
-                        Text(text = uiState.lastSyncLabel, style = MaterialTheme.typography.bodySmall)
-                        Text(text = uiState.dataUsageLabel, style = MaterialTheme.typography.bodySmall)
-                        PrimaryPillButton(text = "Sync now", onClick = onSyncNow)
                     }
                 }
-            }
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "Queued items", style = MaterialTheme.typography.titleMedium)
-                    Surface(
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
-                        color = PrimaryGreen.copy(alpha = 0.15f)
-                    ) {
-                        Text(
-                            text = uiState.queuedRemainingLabel,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                            color = PrimaryGreen,
-                            style = MaterialTheme.typography.labelMedium
-                        )
-                    }
+                items(uiState.queuedItems) { item ->
+                    SyncQueueItemCard(item = item, onRetry = onRetry)
                 }
             }
-            items(uiState.queuedItems) { item ->
-                SyncQueueItemCard(item = item, onRetry = onRetry)
-            }
-        }
 
-        SnackbarCard(
-            message = uiState.snackbarMessage,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(16.dp)
-        )
+            SnackbarCard(
+                message = uiState.snackbarMessage,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(16.dp)
+            )
+        }
     }
 }
 
@@ -170,15 +182,18 @@ private fun SyncQueueItemCard(
     item: SyncQueueItemUi,
     onRetry: (String) -> Unit
 ) {
-    val borderColor = when (item.status) {
-        SyncItemStatus.Failed -> Color(0xFFFFCDD2)
-        else -> Color.Transparent
+    val cardColors = standardCardColors()
+    val cardElevation = standardCardElevation()
+    val baseBorder = standardCardBorder()
+    val border = when (item.status) {
+        SyncItemStatus.Failed -> BorderStroke(1.dp, Color(0xFFFFCDD2))
+        else -> baseBorder
     }
     Card(
         shape = androidx.compose.foundation.shape.RoundedCornerShape(AppDimens.Corner20),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        border = BorderStroke(1.dp, borderColor)
+        colors = cardColors,
+        elevation = cardElevation,
+        border = border
     ) {
         Column(modifier = Modifier.padding(AppDimens.Spacing16)) {
             Row(

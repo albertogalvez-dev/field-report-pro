@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -57,6 +58,9 @@ import com.fieldreportpro.ui.components.PriorityChip
 import com.fieldreportpro.ui.components.StatusChip
 import com.fieldreportpro.ui.components.TimelineCard
 import com.fieldreportpro.ui.components.AddPhotoBottomSheet
+import com.fieldreportpro.ui.components.standardCardBorder
+import com.fieldreportpro.ui.components.standardCardColors
+import com.fieldreportpro.ui.components.standardCardElevation
 import com.fieldreportpro.ui.components.rememberAttachmentPicker
 import com.fieldreportpro.ui.theme.AppDimens
 import com.fieldreportpro.ui.theme.AppTextStyles
@@ -128,88 +132,97 @@ internal fun ReportDetailContent(
     modifier: Modifier = Modifier,
     onSyncNow: () -> Unit = {}
 ) {
-    Box(modifier = modifier) {
-        LazyColumn(
-            contentPadding = PaddingValues(
-                start = AppDimens.Spacing16,
-                end = AppDimens.Spacing16,
-                top = AppDimens.Spacing16,
-                bottom = 140.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(AppDimens.Spacing16)
-        ) {
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = onBack) {
-                        Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = null)
-                    }
-                    Text(
-                        text = "Report Details",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    IconButton(onClick = { }) {
-                        Icon(imageVector = Icons.Outlined.MoreVert, contentDescription = null)
+    Surface(
+        modifier = modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                contentPadding = PaddingValues(
+                    start = AppDimens.Spacing16,
+                    end = AppDimens.Spacing16,
+                    top = AppDimens.Spacing16,
+                    bottom = 140.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(AppDimens.Spacing16)
+            ) {
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = onBack) {
+                            Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = null)
+                        }
+                        Text(
+                            text = "Report Details",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        IconButton(onClick = { }) {
+                            Icon(imageVector = Icons.Outlined.MoreVert, contentDescription = null)
+                        }
                     }
                 }
-            }
-            item {
-                DetailHeaderCard(detail.report)
-            }
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "Photos", style = AppTextStyles.SectionTitle)
-                    Text(
-                        text = "View All",
-                        color = PrimaryGreen,
-                        modifier = Modifier.clickable { onViewAll() }
+                item {
+                    DetailHeaderCard(detail.report)
+                }
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = "Photos", style = AppTextStyles.SectionTitle)
+                        Text(
+                            text = "View All",
+                            color = PrimaryGreen,
+                            modifier = Modifier.clickable { onViewAll() }
+                        )
+                    }
+                }
+                item {
+                    AttachmentRow(
+                        attachments = detail.attachments,
+                        extraCount = (detail.report.attachmentsCount - 3).coerceAtLeast(0),
+                        showAddTile = false,
+                        onAttachmentClick = { attachment -> onAnnotate(detail.report.id, attachment.id) }
                     )
                 }
+                item {
+                    DescriptionCard(description = detail.description)
+                }
+                item {
+                    TimelineCard(title = "Activity Log", events = detail.timeline)
+                }
             }
-            item {
-                AttachmentRow(
-                    attachments = detail.attachments,
-                    extraCount = (detail.report.attachmentsCount - 3).coerceAtLeast(0),
-                    showAddTile = false,
-                    onAttachmentClick = { attachment -> onAnnotate(detail.report.id, attachment.id) }
-                )
-            }
-            item {
-                DescriptionCard(description = detail.description)
-            }
-            item {
-                TimelineCard(title = "Activity Log", events = detail.timeline)
-            }
-        }
 
-        BottomActionBar(
-            onEdit = onEdit,
-            onSyncNow = onSyncNow,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 104.dp)
-        )
+            BottomActionBar(
+                onEdit = onEdit,
+                onSyncNow = onSyncNow,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 104.dp)
+            )
+        }
     }
 }
 
 @Composable
 private fun DetailHeaderCard(report: ReportUi) {
+    val cardColors = standardCardColors()
+    val cardElevation = standardCardElevation()
+    val cardBorder = standardCardBorder()
     Card(
         shape = RoundedCornerShape(AppDimens.Corner20),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+        colors = cardColors,
+        elevation = cardElevation,
+        border = cardBorder
     ) {
         Row {
             Box(
@@ -265,10 +278,14 @@ private fun statusLabel(status: StatusUi): String {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun DescriptionCard(description: String) {
+    val cardColors = standardCardColors()
+    val cardElevation = standardCardElevation()
+    val cardBorder = standardCardBorder()
     Card(
         shape = RoundedCornerShape(AppDimens.Corner20),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+        colors = cardColors,
+        elevation = cardElevation,
+        border = cardBorder
     ) {
         Column(
             modifier = Modifier.padding(AppDimens.Spacing16),

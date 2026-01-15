@@ -44,11 +44,15 @@ fun TimelineCard(
     events: List<TimelineEventUi>,
     modifier: Modifier = Modifier
 ) {
+    val cardColors = standardCardColors()
+    val cardElevation = standardCardElevation()
+    val cardBorder = standardCardBorder()
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(AppDimens.Corner20),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+        colors = cardColors,
+        elevation = cardElevation,
+        border = cardBorder
     ) {
         Column(modifier = Modifier.padding(AppDimens.Spacing16)) {
             Row(

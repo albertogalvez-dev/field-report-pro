@@ -2,6 +2,7 @@ package com.fieldreportpro
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +30,7 @@ fun FieldReportProApp() {
     val currentRoute = backStackEntry?.destination?.route
     val showBottomBar = TopLevelDestination.items.any { it.route == currentRoute }
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             if (showBottomBar) {
                 BottomNavBar(

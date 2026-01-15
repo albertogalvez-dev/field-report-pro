@@ -7,13 +7,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -33,6 +33,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fieldreportpro.AppViewModelProvider
 import com.fieldreportpro.domain.ui_models.SettingsUiState
 import com.fieldreportpro.ui.components.OutlinePillButton
+import com.fieldreportpro.ui.components.standardCardBorder
+import com.fieldreportpro.ui.components.standardCardColors
+import com.fieldreportpro.ui.components.standardCardElevation
 import com.fieldreportpro.ui.theme.AppDimens
 import com.fieldreportpro.ui.theme.FieldReportTheme
 import com.fieldreportpro.ui.theme.PrimaryGreen
@@ -67,118 +70,135 @@ internal fun SettingsContent(
     onCompressChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = AppDimens.Spacing16),
-        contentPadding = PaddingValues(top = AppDimens.Spacing16, bottom = 120.dp),
-        verticalArrangement = Arrangement.spacedBy(AppDimens.Spacing16)
+    Surface(
+        modifier = modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(modifier = Modifier.size(48.dp))
-                Text(text = "Settings", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                TextButton(onClick = onDone) {
-                    Text(text = "Done", color = PrimaryGreen)
-                }
-            }
-        }
-        item {
-            Card(
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(AppDimens.Corner20),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
-            ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = AppDimens.Spacing16),
+            contentPadding = PaddingValues(top = AppDimens.Spacing16, bottom = 120.dp),
+            verticalArrangement = Arrangement.spacedBy(AppDimens.Spacing16)
+        ) {
+            item {
                 Row(
-                    modifier = Modifier.padding(AppDimens.Spacing16),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(56.dp)
-                            .background(Color(0xFF3C4650), androidx.compose.foundation.shape.CircleShape),
-                        contentAlignment = Alignment.Center
+                    Box(modifier = Modifier.size(48.dp))
+                    Text(text = "Settings", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                    TextButton(onClick = onDone) {
+                        Text(text = "Done", color = PrimaryGreen)
+                    }
+                }
+            }
+            item {
+                val cardColors = standardCardColors()
+                val cardElevation = standardCardElevation()
+                val cardBorder = standardCardBorder()
+                Card(
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(AppDimens.Corner20),
+                    colors = cardColors,
+                    elevation = cardElevation,
+                    border = cardBorder
+                ) {
+                    Row(
+                        modifier = Modifier.padding(AppDimens.Spacing16),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Text(text = "VR", color = Color.White, fontWeight = FontWeight.Bold)
-                    }
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(text = "Victoria Reed", style = MaterialTheme.typography.titleSmall)
-                        Text(text = "North Ridge Energy", style = MaterialTheme.typography.bodySmall, color = Color(0xFF9AA1A8))
-                        Text(text = "Active Status", style = MaterialTheme.typography.bodySmall, color = PrimaryGreen)
+                        Box(
+                            modifier = Modifier
+                                .size(56.dp)
+                                .background(Color(0xFF3C4650), androidx.compose.foundation.shape.CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(text = "VR", color = Color.White, fontWeight = FontWeight.Bold)
+                        }
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Text(text = "Victoria Reed", style = MaterialTheme.typography.titleSmall)
+                            Text(text = "North Ridge Energy", style = MaterialTheme.typography.bodySmall, color = Color(0xFF9AA1A8))
+                            Text(text = "Active Status", style = MaterialTheme.typography.bodySmall, color = PrimaryGreen)
+                        }
                     }
                 }
             }
-        }
-        item {
-            Card(
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(AppDimens.Corner20),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(AppDimens.Spacing16),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+            item {
+                val cardColors = standardCardColors()
+                val cardElevation = standardCardElevation()
+                val cardBorder = standardCardBorder()
+                Card(
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(AppDimens.Corner20),
+                    colors = cardColors,
+                    elevation = cardElevation,
+                    border = cardBorder
                 ) {
-                    Text(text = "Preferences", style = MaterialTheme.typography.titleSmall)
-                    PreferenceToggle(
-                        title = "Offline mode (simulate)",
-                        checked = uiState.offlineModeSimulated,
-                        onCheckedChange = onOfflineModeChange
-                    )
-                    PreferenceToggle(
-                        title = "Auto-sync on Wi-Fi",
-                        checked = uiState.autoSyncWifi,
-                        onCheckedChange = onAutoSyncChange
-                    )
-                    PreferenceToggle(
-                        title = "Compress photos",
-                        checked = uiState.compressPhotos,
-                        onCheckedChange = onCompressChange
-                    )
-                }
-            }
-        }
-        item {
-            Card(
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(AppDimens.Corner20),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(AppDimens.Spacing16),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Text(text = "About", style = MaterialTheme.typography.titleSmall)
-                    Text(text = "Field Report Pro", style = MaterialTheme.typography.titleMedium)
-                    Text(text = "Build v1.0.2 (Production)", style = MaterialTheme.typography.bodySmall, color = Color(0xFF9AA1A8))
-                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        AboutChip(label = "Kotlin")
-                        AboutChip(label = "Jetpack Compose")
-                        AboutChip(label = "Room DB")
-                        AboutChip(label = "WorkManager")
+                    Column(
+                        modifier = Modifier.padding(AppDimens.Spacing16),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(text = "Preferences", style = MaterialTheme.typography.titleSmall)
+                        PreferenceToggle(
+                            title = "Offline mode (simulate)",
+                            checked = uiState.offlineModeSimulated,
+                            onCheckedChange = onOfflineModeChange
+                        )
+                        PreferenceToggle(
+                            title = "Auto-sync on Wi-Fi",
+                            checked = uiState.autoSyncWifi,
+                            onCheckedChange = onAutoSyncChange
+                        )
+                        PreferenceToggle(
+                            title = "Compress photos",
+                            checked = uiState.compressPhotos,
+                            onCheckedChange = onCompressChange
+                        )
                     }
                 }
             }
-        }
-        item {
-            OutlinePillButton(
-                text = "Sign Out",
-                borderColor = Color(0xFFEF5350),
-                onClick = {}
-            )
-        }
-        item {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "Device ID: FRP-20489", style = MaterialTheme.typography.bodySmall, color = Color(0xFF9AA1A8))
-                Text(text = uiState.lastSyncLabel, style = MaterialTheme.typography.bodySmall, color = Color(0xFF9AA1A8))
+            item {
+                val cardColors = standardCardColors()
+                val cardElevation = standardCardElevation()
+                val cardBorder = standardCardBorder()
+                Card(
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(AppDimens.Corner20),
+                    colors = cardColors,
+                    elevation = cardElevation,
+                    border = cardBorder
+                ) {
+                    Column(
+                        modifier = Modifier.padding(AppDimens.Spacing16),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(text = "About", style = MaterialTheme.typography.titleSmall)
+                        Text(text = "Field Report Pro", style = MaterialTheme.typography.titleMedium)
+                        Text(text = "Build v1.0.2 (Production)", style = MaterialTheme.typography.bodySmall, color = Color(0xFF9AA1A8))
+                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            AboutChip(label = "Kotlin")
+                            AboutChip(label = "Jetpack Compose")
+                            AboutChip(label = "Room DB")
+                            AboutChip(label = "WorkManager")
+                        }
+                    }
+                }
+            }
+            item {
+                OutlinePillButton(
+                    text = "Sign Out",
+                    borderColor = Color(0xFFEF5350),
+                    onClick = {}
+                )
+            }
+            item {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "Device ID: FRP-20489", style = MaterialTheme.typography.bodySmall, color = Color(0xFF9AA1A8))
+                    Text(text = uiState.lastSyncLabel, style = MaterialTheme.typography.bodySmall, color = Color(0xFF9AA1A8))
+                }
             }
         }
     }

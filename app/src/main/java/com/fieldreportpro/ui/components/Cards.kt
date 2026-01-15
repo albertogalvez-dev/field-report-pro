@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -41,6 +42,25 @@ import com.fieldreportpro.ui.theme.PendingText
 import com.fieldreportpro.ui.theme.PrimaryGreen
 import com.fieldreportpro.ui.theme.SyncedBg
 import com.fieldreportpro.ui.theme.TextSub
+
+@Composable
+internal fun standardCardColors() =
+    CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+
+@Composable
+internal fun standardCardElevation() = CardDefaults.cardElevation(
+    defaultElevation = if (MaterialTheme.colorScheme.background.luminance() > 0.5f) 2.dp else 3.dp
+)
+
+@Composable
+internal fun standardCardBorder(): BorderStroke? {
+    val isLight = MaterialTheme.colorScheme.background.luminance() > 0.5f
+    return if (isLight) {
+        BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.25f))
+    } else {
+        null
+    }
+}
 
 @Composable
 fun OfflineBannerCard(
@@ -105,11 +125,15 @@ fun SummaryCardLarge(
     iconBackground: Color = SyncedBg,
     iconTint: Color = PrimaryGreen
 ) {
+    val cardColors = standardCardColors()
+    val cardElevation = standardCardElevation()
+    val cardBorder = standardCardBorder()
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(AppDimens.Corner20),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+        colors = cardColors,
+        elevation = cardElevation,
+        border = cardBorder
     ) {
         Row(
             modifier = Modifier.padding(AppDimens.Spacing16),
@@ -145,11 +169,15 @@ fun SummaryCardSmall(
     chipBackground: Color,
     chipTextColor: Color
 ) {
+    val cardColors = standardCardColors()
+    val cardElevation = standardCardElevation()
+    val cardBorder = standardCardBorder()
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(AppDimens.Corner20),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+        colors = cardColors,
+        elevation = cardElevation,
+        border = cardBorder
     ) {
         Column(
             modifier = Modifier.padding(AppDimens.Spacing16),
@@ -181,11 +209,15 @@ fun ReportActivityCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val cardColors = standardCardColors()
+    val cardElevation = standardCardElevation()
+    val cardBorder = standardCardBorder()
     Card(
         modifier = modifier.clickable { onClick() },
         shape = RoundedCornerShape(AppDimens.Corner20),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+        colors = cardColors,
+        elevation = cardElevation,
+        border = cardBorder
     ) {
         Column(
             modifier = Modifier.padding(AppDimens.Spacing16),
