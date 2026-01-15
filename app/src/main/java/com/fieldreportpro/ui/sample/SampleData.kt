@@ -1,4 +1,4 @@
-package com.fieldreportpro.data
+package com.fieldreportpro.ui.sample
 
 import com.fieldreportpro.domain.ui_models.AccentColorType
 import com.fieldreportpro.domain.ui_models.AttachmentUi
@@ -14,19 +14,15 @@ import com.fieldreportpro.domain.ui_models.SyncUiState
 import com.fieldreportpro.domain.ui_models.TimelineEventType
 import com.fieldreportpro.domain.ui_models.TimelineEventUi
 import com.fieldreportpro.domain.ui_models.TimelineIconType
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
-object FakeReportRepository {
-    private val attachmentUrls = listOf(
-        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=500&q=60",
-        "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=500&q=60",
-        "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=500&q=60",
-        "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=500&q=60",
-        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=500&q=60"
+object SampleData {
+    val homeSummary = HomeSummaryUi(
+        syncedCount = 128,
+        draftCount = 3,
+        pendingCount = 6
     )
 
-    private val reports = listOf(
+    val reports: List<ReportUi> = listOf(
         ReportUi(
             id = "1",
             refCode = "REF-2023-89",
@@ -89,16 +85,40 @@ object FakeReportRepository {
         )
     )
 
-    private val detailAttachments = attachmentUrls.mapIndexed { index, url ->
+    val detailAttachments: List<AttachmentUi> = listOf(
         AttachmentUi(
-            id = "att-${index + 1}",
+            id = "att-1",
             reportId = "1",
-            thumbnailResOrUrl = url,
-            annotated = index % 2 == 0
+            thumbnailResOrUrl = "android.resource://com.fieldreportpro/drawable/demo_photo_1",
+            annotated = true
+        ),
+        AttachmentUi(
+            id = "att-2",
+            reportId = "1",
+            thumbnailResOrUrl = "android.resource://com.fieldreportpro/drawable/demo_photo_2",
+            annotated = false
+        ),
+        AttachmentUi(
+            id = "att-3",
+            reportId = "1",
+            thumbnailResOrUrl = "android.resource://com.fieldreportpro/drawable/demo_photo_3",
+            annotated = true
+        ),
+        AttachmentUi(
+            id = "att-4",
+            reportId = "1",
+            thumbnailResOrUrl = "android.resource://com.fieldreportpro/drawable/demo_photo_1",
+            annotated = false
+        ),
+        AttachmentUi(
+            id = "att-5",
+            reportId = "1",
+            thumbnailResOrUrl = "android.resource://com.fieldreportpro/drawable/demo_photo_2",
+            annotated = true
         )
-    }
+    )
 
-    private val detailTimeline = listOf(
+    val detailTimeline: List<TimelineEventUi> = listOf(
         TimelineEventUi(
             id = "t1",
             type = TimelineEventType.Synced,
@@ -146,85 +166,49 @@ object FakeReportRepository {
         )
     )
 
-    private val _settingsState = MutableStateFlow(
-        SettingsUiState(
-            offlineModeSimulated = false,
-            autoSyncWifi = true,
-            compressPhotos = true
-        )
+    val reportDetail = ReportDetailUi(
+        report = reports.first(),
+        description = "Inspection notes show stress fractures around the intake housing. Pressure dropped to 2 PSI during load testing.",
+        locationLabel = "Zone 4, Sector B",
+        attachments = detailAttachments,
+        timeline = detailTimeline
     )
-    val settingsState = _settingsState.asStateFlow()
 
-    fun updateSettings(transform: (SettingsUiState) -> SettingsUiState) {
-        _settingsState.value = transform(_settingsState.value)
-    }
-
-    fun getHomeSummary(): HomeSummaryUi {
-        return HomeSummaryUi(
-            syncedCount = 128,
-            draftCount = 3,
-            pendingCount = 6
-        )
-    }
-
-    fun getRecentActivity(): List<ReportUi> = reports
-
-    fun getReportsList(): List<ReportUi> = reports
-
-    fun getReportDetail(reportId: String): ReportDetailUi {
-        val report = reports.firstOrNull { it.id == reportId } ?: reports.first()
-        return ReportDetailUi(
-            report = report,
-            description = "Inspection notes show stress fractures around the intake housing. Pressure dropped to 2 PSI during load testing.",
-            locationLabel = "Zone 4, Sector B",
-            attachments = detailAttachments,
-            timeline = detailTimeline
-        )
-    }
-
-    fun getAttachmentsPreview(): List<AttachmentUi> = detailAttachments.take(3)
-
-    fun getSyncState(): SyncUiState {
-        return SyncUiState(
-            systemOnline = true,
-            lastSyncLabel = "Last sync: 2 mins ago",
-            dataUsageLabel = "DATA USAGE 24.5 MB today",
-            queuedRemainingLabel = "3 remaining",
-            queuedItems = listOf(
-                SyncQueueItemUi(
-                    id = "sync-1",
-                    title = "Uploading report REF-2023-89",
-                    subtitle = "60% complete",
-                    status = SyncItemStatus.Uploading,
-                    progress = 0.6f
-                ),
-                SyncQueueItemUi(
-                    id = "sync-2",
-                    title = "Failed to upload REF-2023-93",
-                    subtitle = "Tap to retry",
-                    status = SyncItemStatus.Failed,
-                    progress = null
-                ),
-                SyncQueueItemUi(
-                    id = "sync-3",
-                    title = "Waiting for network",
-                    subtitle = "Queued for Wi-Fi",
-                    status = SyncItemStatus.Waiting,
-                    progress = null
-                )
+    val syncState = SyncUiState(
+        systemOnline = true,
+        lastSyncLabel = "Last sync: 2 mins ago",
+        dataUsageLabel = "DATA USAGE 24.5 MB today",
+        queuedRemainingLabel = "3 remaining",
+        queuedItems = listOf(
+            SyncQueueItemUi(
+                id = "sync-1",
+                title = "Uploading report REF-2023-89",
+                subtitle = "60% complete",
+                status = SyncItemStatus.Uploading,
+                progress = 0.6f
             ),
-            snackbarMessage = "Successfully synced 3 reports"
-        )
-    }
+            SyncQueueItemUi(
+                id = "sync-2",
+                title = "Failed to upload REF-2023-93",
+                subtitle = "Tap to retry",
+                status = SyncItemStatus.Failed,
+                progress = null
+            ),
+            SyncQueueItemUi(
+                id = "sync-3",
+                title = "Waiting for network",
+                subtitle = "Queued for Wi-Fi",
+                status = SyncItemStatus.Waiting,
+                progress = null
+            )
+        ),
+        snackbarMessage = "Successfully synced 3 reports"
+    )
 
-    fun saveDraft(title: String) {
-        // Demo-only: no persistence yet.
-    }
-
-    fun queueReport(title: String) {
-        // Demo-only: no persistence yet.
-    }
-
-    fun mapPreviewUrl(): String =
-        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=60"
+    val settingsState = SettingsUiState(
+        offlineModeSimulated = true,
+        autoSyncWifi = true,
+        compressPhotos = true,
+        lastSyncLabel = "Last synced 2 mins ago"
+    )
 }

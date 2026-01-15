@@ -1,11 +1,16 @@
 package com.fieldreportpro.ui.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.fieldreportpro.data.FakeReportRepository
+import androidx.lifecycle.viewModelScope
+import com.fieldreportpro.domain.ReportRepository
 import com.fieldreportpro.domain.ui_models.ReportUi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 private val defaultFilters = ReportsFilters(
     category = false,
@@ -31,40 +36,57 @@ data class ReportsUiState(
     val demoEmptyState: Boolean
 )
 
-class ReportsViewModel : ViewModel() {
-    private val repository = FakeReportRepository
+@OptIn(ExperimentalCoroutinesApi::class)
+class ReportsViewModel(
+    private val repository: ReportRepository
+) : ViewModel() {
+    private val query = MutableStateFlow("")
+    private val filters = MutableStateFlow(defaultFilters)
+    private val demoEmpty = MutableStateFlow(false)
 
-    var uiState by mutableStateOf(
+    private val reportsFlow = query.flatMapLatest { repository.observeReports(it) }
+
+    val uiState: StateFlow<ReportsUiState> = combine(
+        query,
+        filters,
+        demoEmpty,
+        reportsFlow
+    ) { queryValue, filterValue, demoValue, reports ->
+        val visibleReports = if (filterValue.isActive || demoValue) emptyList() else reports
+        ReportsUiState(
+            query = queryValue,
+            filters = filterValue,
+            reports = visibleReports,
+            demoEmptyState = demoValue
+        )
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5_000),
         ReportsUiState(
             query = "",
             filters = defaultFilters,
-            reports = repository.getReportsList(),
+            reports = emptyList(),
             demoEmptyState = false
         )
     )
-        private set
 
     fun updateQuery(query: String) {
-        uiState = uiState.copy(query = query)
+        this.query.value = query
     }
 
     fun toggleFilter(filter: ReportFilterType) {
+        val current = filters.value
         val updatedFilters = when (filter) {
-            ReportFilterType.Category -> uiState.filters.copy(category = !uiState.filters.category)
-            ReportFilterType.Priority -> uiState.filters.copy(priority = !uiState.filters.priority)
-            ReportFilterType.Status -> uiState.filters.copy(status = !uiState.filters.status)
-            ReportFilterType.Date -> uiState.filters.copy(date = !uiState.filters.date)
+            ReportFilterType.Category -> current.copy(category = !current.category)
+            ReportFilterType.Priority -> current.copy(priority = !current.priority)
+            ReportFilterType.Status -> current.copy(status = !current.status)
+            ReportFilterType.Date -> current.copy(date = !current.date)
         }
-        refreshReports(updatedFilters, uiState.demoEmptyState)
+        filters.value = updatedFilters
     }
 
     fun toggleDemoEmptyState(enabled: Boolean) {
-        refreshReports(uiState.filters, enabled)
-    }
-
-    private fun refreshReports(filters: ReportsFilters, demoEmpty: Boolean) {
-        val reports = if (filters.isActive || demoEmpty) emptyList() else repository.getReportsList()
-        uiState = uiState.copy(filters = filters, reports = reports, demoEmptyState = demoEmpty)
+        demoEmpty.value = enabled
     }
 }
 

@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,7 +37,9 @@ import androidx.compose.ui.text.font.FontWeight
 import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fieldreportpro.AppViewModelProvider
 import com.fieldreportpro.domain.ui_models.SyncItemStatus
 import com.fieldreportpro.domain.ui_models.SyncQueueItemUi
 import com.fieldreportpro.domain.ui_models.SyncUiState
@@ -50,11 +53,14 @@ import com.fieldreportpro.ui.viewmodel.SyncViewModel
 fun SyncCenterScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SyncViewModel = viewModel()
+    viewModel: SyncViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     SyncCenterContent(
-        uiState = viewModel.uiState,
+        uiState = uiState,
         onBack = onBack,
+        onSyncNow = viewModel::syncNow,
+        onRetry = viewModel::retrySync,
         modifier = modifier
     )
 }
@@ -63,6 +69,8 @@ fun SyncCenterScreen(
 internal fun SyncCenterContent(
     uiState: SyncUiState,
     onBack: () -> Unit,
+    onSyncNow: () -> Unit,
+    onRetry: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier) {
@@ -106,14 +114,20 @@ internal fun SyncCenterContent(
                             Box(
                                 modifier = Modifier
                                     .size(8.dp)
-                                    .background(PrimaryGreen, androidx.compose.foundation.shape.CircleShape)
+                                    .background(
+                                        if (uiState.systemOnline) PrimaryGreen else Color(0xFFD32F2F),
+                                        androidx.compose.foundation.shape.CircleShape
+                                    )
                             )
                             Spacer(modifier = Modifier.size(8.dp))
-                            Text(text = "System Online", style = MaterialTheme.typography.titleSmall)
+                            Text(
+                                text = if (uiState.systemOnline) "System Online" else "System Offline",
+                                style = MaterialTheme.typography.titleSmall
+                            )
                         }
                         Text(text = uiState.lastSyncLabel, style = MaterialTheme.typography.bodySmall)
                         Text(text = uiState.dataUsageLabel, style = MaterialTheme.typography.bodySmall)
-                        PrimaryPillButton(text = "Sync now", onClick = { })
+                        PrimaryPillButton(text = "Sync now", onClick = onSyncNow)
                     }
                 }
             }
@@ -138,7 +152,7 @@ internal fun SyncCenterContent(
                 }
             }
             items(uiState.queuedItems) { item ->
-                SyncQueueItemCard(item = item)
+                SyncQueueItemCard(item = item, onRetry = onRetry)
             }
         }
 
@@ -152,7 +166,10 @@ internal fun SyncCenterContent(
 }
 
 @Composable
-private fun SyncQueueItemCard(item: SyncQueueItemUi) {
+private fun SyncQueueItemCard(
+    item: SyncQueueItemUi,
+    onRetry: (String) -> Unit
+) {
     val borderColor = when (item.status) {
         SyncItemStatus.Failed -> Color(0xFFFFCDD2)
         else -> Color.Transparent
@@ -196,7 +213,7 @@ private fun SyncQueueItemCard(item: SyncQueueItemUi) {
             }
             if (item.status == SyncItemStatus.Failed) {
                 Spacer(modifier = Modifier.height(10.dp))
-                PrimaryPillButton(text = "Retry", onClick = { })
+                PrimaryPillButton(text = "Retry", onClick = { onRetry(item.id) })
             }
         }
     }
@@ -245,7 +262,9 @@ private fun SyncCenterPreview() {
                 ),
                 snackbarMessage = "Successfully synced 3 reports"
             ),
-            onBack = {}
+            onBack = {},
+            onSyncNow = {},
+            onRetry = {}
         )
     }
 }
@@ -271,7 +290,9 @@ private fun SyncCenterPreviewDark() {
                 ),
                 snackbarMessage = "Successfully synced 3 reports"
             ),
-            onBack = {}
+            onBack = {},
+            onSyncNow = {},
+            onRetry = {}
         )
     }
 }

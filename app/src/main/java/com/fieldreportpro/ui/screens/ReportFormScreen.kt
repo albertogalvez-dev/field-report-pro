@@ -46,11 +46,12 @@ import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.fieldreportpro.data.FakeReportRepository
 import com.fieldreportpro.domain.ui_models.PriorityUi
+import com.fieldreportpro.domain.ui_models.ReportFormData
 import com.fieldreportpro.ui.components.AttachmentRow
 import com.fieldreportpro.ui.components.OutlinePillButton
 import com.fieldreportpro.ui.components.PrimaryPillButton
+import com.fieldreportpro.ui.sample.DemoAssets
 import com.fieldreportpro.ui.theme.AppDimens
 import com.fieldreportpro.ui.theme.AppTextStyles
 import com.fieldreportpro.ui.theme.FieldReportTheme
@@ -59,8 +60,8 @@ import com.fieldreportpro.ui.theme.PrimaryGreen
 @Composable
 fun ReportFormScreen(
     onCancel: () -> Unit,
-    onSaveDraft: () -> Unit,
-    onQueueSync: () -> Unit,
+    onSaveDraft: (ReportFormData) -> Unit,
+    onQueueSync: (ReportFormData) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var reportTitle by rememberSaveable { mutableStateOf("") }
@@ -216,7 +217,7 @@ fun ReportFormScreen(
                             .background(Color(0xFFEAEAEA), RoundedCornerShape(16.dp))
                     ) {
                         AsyncImage(
-                            model = FakeReportRepository.mapPreviewUrl(),
+                            model = DemoAssets.mapPreviewUri,
                             contentDescription = null,
                             modifier = Modifier.matchParentSize(),
                             contentScale = androidx.compose.ui.layout.ContentScale.Crop
@@ -250,7 +251,7 @@ fun ReportFormScreen(
                         Text(text = "3 Files", style = MaterialTheme.typography.bodySmall, color = Color(0xFF7A7A7A))
                     }
                     Spacer(modifier = Modifier.height(12.dp))
-                    AttachmentRow(attachments = FakeReportRepository.getAttachmentsPreview())
+                    AttachmentRow(attachments = DemoAssets.attachmentsPreview)
                 }
             }
         }
@@ -259,15 +260,31 @@ fun ReportFormScreen(
             onSaveDraft = {
                 showError = reportTitle.isBlank()
                 if (!showError) {
-                    FakeReportRepository.saveDraft(reportTitle)
-                    onSaveDraft()
+                    onSaveDraft(
+                        ReportFormData(
+                            title = reportTitle.trim(),
+                            category = selectedCategory,
+                            priority = selectedPriority,
+                            locationText = "Zone 4, Sector B",
+                            unit = "Unit 4",
+                            description = description.trim()
+                        )
+                    )
                 }
             },
             onQueueSync = {
                 showError = reportTitle.isBlank()
                 if (!showError) {
-                    FakeReportRepository.queueReport(reportTitle)
-                    onQueueSync()
+                    onQueueSync(
+                        ReportFormData(
+                            title = reportTitle.trim(),
+                            category = selectedCategory,
+                            priority = selectedPriority,
+                            locationText = "Zone 4, Sector B",
+                            unit = "Unit 4",
+                            description = description.trim()
+                        )
+                    )
                 }
             },
             modifier = Modifier.align(Alignment.BottomCenter)
@@ -374,8 +391,8 @@ private fun ReportFormPreview() {
     FieldReportTheme {
         ReportFormScreen(
             onCancel = {},
-            onSaveDraft = {},
-            onQueueSync = {}
+            onSaveDraft = { _ -> },
+            onQueueSync = { _ -> }
         )
     }
 }
@@ -386,8 +403,8 @@ private fun ReportFormPreviewDark() {
     FieldReportTheme(darkTheme = true) {
         ReportFormScreen(
             onCancel = {},
-            onSaveDraft = {},
-            onQueueSync = {}
+            onSaveDraft = { _ -> },
+            onQueueSync = { _ -> }
         )
     }
 }

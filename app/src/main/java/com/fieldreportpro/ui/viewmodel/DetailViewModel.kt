@@ -1,20 +1,27 @@
 package com.fieldreportpro.ui.viewmodel
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.fieldreportpro.data.FakeReportRepository
+import androidx.lifecycle.viewModelScope
+import com.fieldreportpro.domain.ReportRepository
 import com.fieldreportpro.domain.ui_models.ReportDetailUi
-
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 data class DetailUiState(
     val reportDetail: ReportDetailUi
 )
 
-class DetailViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
-    private val repository = FakeReportRepository
-    private val reportId = savedStateHandle.get<String>("id") ?: "1"
-
-    val uiState = DetailUiState(
-        reportDetail = repository.getReportDetail(reportId)
-    )
+class DetailViewModel(
+    reportId: String,
+    repository: ReportRepository
+) : ViewModel() {
+    val uiState: StateFlow<DetailUiState> = repository.observeReportDetail(reportId)
+        .map { detail -> DetailUiState(reportDetail = detail) }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            DetailUiState(ReportDetailUi.Empty)
+        )
 }

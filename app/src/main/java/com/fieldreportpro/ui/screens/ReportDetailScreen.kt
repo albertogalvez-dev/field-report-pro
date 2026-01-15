@@ -28,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,7 +36,10 @@ import androidx.compose.ui.text.font.FontWeight
 import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.platform.LocalContext
+import com.fieldreportpro.FieldReportProApplication
 import com.fieldreportpro.domain.ui_models.PriorityUi
 import com.fieldreportpro.domain.ui_models.ReportDetailUi
 import com.fieldreportpro.domain.ui_models.ReportUi
@@ -52,16 +56,20 @@ import com.fieldreportpro.ui.theme.FieldReportTheme
 import com.fieldreportpro.ui.theme.HighPriority
 import com.fieldreportpro.ui.theme.PrimaryGreen
 import com.fieldreportpro.ui.viewmodel.DetailViewModel
+import com.fieldreportpro.ui.viewmodel.DetailViewModelFactory
 
 @Composable
 fun ReportDetailScreen(
+    reportId: String,
     onBack: () -> Unit,
     onEdit: () -> Unit,
     onAnnotate: (String, String) -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: DetailViewModel = viewModel()
+    modifier: Modifier = Modifier
 ) {
-    val uiState = viewModel.uiState
+    val app = LocalContext.current.applicationContext as FieldReportProApplication
+    val viewModel: DetailViewModel =
+        viewModel(factory = DetailViewModelFactory(app.container.repository, reportId))
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ReportDetailContent(
         detail = uiState.reportDetail,
@@ -78,7 +86,8 @@ internal fun ReportDetailContent(
     onBack: () -> Unit,
     onEdit: () -> Unit,
     onAnnotate: (String, String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSyncNow: () -> Unit = {}
 ) {
     Box(modifier = modifier) {
         LazyColumn(
@@ -140,7 +149,7 @@ internal fun ReportDetailContent(
 
         BottomActionBar(
             onEdit = onEdit,
-            onSyncNow = { },
+            onSyncNow = onSyncNow,
             modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
@@ -179,11 +188,20 @@ private fun DetailHeaderCard(report: ReportUi) {
                     Text(text = "Updated today at 10:24 AM", style = MaterialTheme.typography.bodySmall, color = Color(0xFF8A8A8A))
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    PriorityChip(priority = PriorityUi.High)
-                    StatusChip(status = StatusUi.Pending, label = "PENDING REVIEW")
+                    PriorityChip(priority = report.priority)
+                    StatusChip(status = report.status, label = statusLabel(report.status))
                 }
             }
         }
+    }
+}
+
+private fun statusLabel(status: StatusUi): String {
+    return when (status) {
+        StatusUi.Pending -> "PENDING REVIEW"
+        StatusUi.Draft -> "DRAFT"
+        StatusUi.Synced -> "SYNCED"
+        StatusUi.Error -> "ERROR"
     }
 }
 

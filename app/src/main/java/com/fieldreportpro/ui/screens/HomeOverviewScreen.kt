@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fieldreportpro.AppViewModelProvider
 import com.fieldreportpro.domain.ui_models.ReportUi
 import com.fieldreportpro.ui.components.DraftSummaryCard
 import com.fieldreportpro.ui.components.OfflineBannerCard
@@ -52,10 +53,10 @@ fun HomeOverviewScreen(
     onCreateReport: () -> Unit,
     onOpenReport: (String) -> Unit,
     modifier: Modifier = Modifier,
-    homeViewModel: HomeViewModel = viewModel(),
-    settingsViewModel: SettingsViewModel = viewModel()
+    homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    settingsViewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val uiState = homeViewModel.uiState
+    val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
     val settingsState by settingsViewModel.uiState.collectAsStateWithLifecycle()
 
     HomeOverviewContent(

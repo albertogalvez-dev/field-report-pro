@@ -20,7 +20,9 @@ import androidx.compose.ui.Modifier
 import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fieldreportpro.AppViewModelProvider
 import com.fieldreportpro.BuildConfig
 import com.fieldreportpro.ui.components.EmptyState
 import com.fieldreportpro.ui.components.FilterChipRow
@@ -36,10 +38,33 @@ fun ReportsListScreen(
     onOpenReport: (String) -> Unit,
     modifier: Modifier = Modifier,
     showDemoToggle: Boolean = BuildConfig.DEBUG,
-    viewModel: ReportsViewModel = viewModel()
+    viewModel: ReportsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val uiState = viewModel.uiState
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    ReportsListContent(
+        uiState = uiState,
+        onCreateReport = onCreateReport,
+        onOpenReport = onOpenReport,
+        onQueryChange = viewModel::updateQuery,
+        onToggleFilter = viewModel::toggleFilter,
+        onToggleDemoEmptyState = viewModel::toggleDemoEmptyState,
+        showDemoToggle = showDemoToggle,
+        modifier = modifier
+    )
+}
+
+@Composable
+internal fun ReportsListContent(
+    uiState: com.fieldreportpro.ui.viewmodel.ReportsUiState,
+    onCreateReport: () -> Unit,
+    onOpenReport: (String) -> Unit,
+    onQueryChange: (String) -> Unit,
+    onToggleFilter: (com.fieldreportpro.ui.viewmodel.ReportFilterType) -> Unit,
+    onToggleDemoEmptyState: (Boolean) -> Unit,
+    showDemoToggle: Boolean,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -49,11 +74,11 @@ fun ReportsListScreen(
         SearchBar(
             query = uiState.query,
             placeholder = "Search reports, IDs, or tags...",
-            onQueryChange = viewModel::updateQuery
+            onQueryChange = onQueryChange
         )
         FilterChipRow(
             filters = uiState.filters,
-            onToggle = viewModel::toggleFilter
+            onToggle = onToggleFilter
         )
         if (uiState.reports.isEmpty()) {
             Spacer(modifier = Modifier.height(24.dp))
@@ -83,7 +108,7 @@ fun ReportsListScreen(
                 Text(text = "Demo mode: show empty list")
                 Switch(
                     checked = uiState.demoEmptyState,
-                    onCheckedChange = viewModel::toggleDemoEmptyState
+                    onCheckedChange = onToggleDemoEmptyState
                 )
             }
         }
@@ -94,11 +119,24 @@ fun ReportsListScreen(
 @Composable
 private fun ReportsListPreview() {
     FieldReportTheme {
-        ReportsListScreen(
+        ReportsListContent(
+            uiState = com.fieldreportpro.ui.viewmodel.ReportsUiState(
+                query = "",
+                filters = com.fieldreportpro.ui.viewmodel.ReportsFilters(
+                    category = false,
+                    priority = false,
+                    status = false,
+                    date = false
+                ),
+                reports = emptyList(),
+                demoEmptyState = true
+            ),
             onCreateReport = {},
             onOpenReport = {},
-            showDemoToggle = false,
-            viewModel = ReportsViewModel().apply { toggleDemoEmptyState(true) }
+            onQueryChange = {},
+            onToggleFilter = {},
+            onToggleDemoEmptyState = {},
+            showDemoToggle = false
         )
     }
 }
@@ -107,11 +145,24 @@ private fun ReportsListPreview() {
 @Composable
 private fun ReportsListPreviewDark() {
     FieldReportTheme(darkTheme = true) {
-        ReportsListScreen(
+        ReportsListContent(
+            uiState = com.fieldreportpro.ui.viewmodel.ReportsUiState(
+                query = "",
+                filters = com.fieldreportpro.ui.viewmodel.ReportsFilters(
+                    category = false,
+                    priority = false,
+                    status = false,
+                    date = false
+                ),
+                reports = emptyList(),
+                demoEmptyState = true
+            ),
             onCreateReport = {},
             onOpenReport = {},
-            showDemoToggle = false,
-            viewModel = ReportsViewModel().apply { toggleDemoEmptyState(true) }
+            onQueryChange = {},
+            onToggleFilter = {},
+            onToggleDemoEmptyState = {},
+            showDemoToggle = false
         )
     }
 }

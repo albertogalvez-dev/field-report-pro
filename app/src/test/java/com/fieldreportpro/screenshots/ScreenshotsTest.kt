@@ -2,17 +2,17 @@ package com.fieldreportpro.screenshots
 
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
-import com.fieldreportpro.data.FakeReportRepository
-import com.fieldreportpro.domain.ui_models.SettingsUiState
 import com.fieldreportpro.ui.screens.HomeOverviewContent
 import com.fieldreportpro.ui.screens.PhotoAnnotationScreen
 import com.fieldreportpro.ui.screens.ReportDetailContent
 import com.fieldreportpro.ui.screens.ReportFormScreen
-import com.fieldreportpro.ui.screens.ReportsListScreen
+import com.fieldreportpro.ui.screens.ReportsListContent
 import com.fieldreportpro.ui.screens.SettingsContent
 import com.fieldreportpro.ui.screens.SyncCenterContent
+import com.fieldreportpro.ui.sample.SampleData
 import com.fieldreportpro.ui.theme.FieldReportTheme
-import com.fieldreportpro.ui.viewmodel.ReportsViewModel
+import com.fieldreportpro.ui.viewmodel.ReportsFilters
+import com.fieldreportpro.ui.viewmodel.ReportsUiState
 import org.junit.Rule
 import org.junit.Test
 
@@ -27,10 +27,10 @@ class ScreenshotsTest {
         paparazzi.snapshot(name = "home_light") {
             FieldReportTheme {
                 HomeOverviewContent(
-                    summaryCount = "128",
-                    draftCount = "3",
-                    pendingCount = "6",
-                    recentActivity = FakeReportRepository.getRecentActivity(),
+                    summaryCount = SampleData.homeSummary.syncedCount.toString(),
+                    draftCount = SampleData.homeSummary.draftCount.toString(),
+                    pendingCount = SampleData.homeSummary.pendingCount.toString(),
+                    recentActivity = SampleData.reports,
                     showOfflineBanner = false,
                     onCreateReport = {},
                     onOpenReport = {}
@@ -44,10 +44,10 @@ class ScreenshotsTest {
         paparazzi.snapshot(name = "home_dark") {
             FieldReportTheme(darkTheme = true) {
                 HomeOverviewContent(
-                    summaryCount = "128",
-                    draftCount = "3",
-                    pendingCount = "6",
-                    recentActivity = FakeReportRepository.getRecentActivity(),
+                    summaryCount = SampleData.homeSummary.syncedCount.toString(),
+                    draftCount = SampleData.homeSummary.draftCount.toString(),
+                    pendingCount = SampleData.homeSummary.pendingCount.toString(),
+                    recentActivity = SampleData.reports,
                     showOfflineBanner = true,
                     onCreateReport = {},
                     onOpenReport = {}
@@ -58,14 +58,26 @@ class ScreenshotsTest {
 
     @Test
     fun reportsEmptyState() {
-        val viewModel = ReportsViewModel().apply { toggleDemoEmptyState(true) }
         paparazzi.snapshot(name = "empty_state") {
             FieldReportTheme {
-                ReportsListScreen(
+                ReportsListContent(
                     onCreateReport = {},
                     onOpenReport = {},
                     showDemoToggle = false,
-                    viewModel = viewModel
+                    onQueryChange = {},
+                    onToggleFilter = {},
+                    onToggleDemoEmptyState = {},
+                    uiState = ReportsUiState(
+                        query = "",
+                        filters = ReportsFilters(
+                            category = false,
+                            priority = false,
+                            status = false,
+                            date = false
+                        ),
+                        reports = emptyList(),
+                        demoEmptyState = true
+                    )
                 )
             }
         }
@@ -77,8 +89,8 @@ class ScreenshotsTest {
             FieldReportTheme {
                 ReportFormScreen(
                     onCancel = {},
-                    onSaveDraft = {},
-                    onQueueSync = {}
+                    onSaveDraft = { _ -> },
+                    onQueueSync = { _ -> }
                 )
             }
         }
@@ -89,7 +101,7 @@ class ScreenshotsTest {
         paparazzi.snapshot(name = "detail") {
             FieldReportTheme {
                 ReportDetailContent(
-                    detail = FakeReportRepository.getReportDetail("1"),
+                    detail = SampleData.reportDetail,
                     onBack = {},
                     onEdit = {},
                     onAnnotate = { _, _ -> }
@@ -103,8 +115,10 @@ class ScreenshotsTest {
         paparazzi.snapshot(name = "sync") {
             FieldReportTheme {
                 SyncCenterContent(
-                    uiState = FakeReportRepository.getSyncState(),
-                    onBack = {}
+                    uiState = SampleData.syncState,
+                    onBack = {},
+                    onSyncNow = {},
+                    onRetry = {}
                 )
             }
         }
@@ -115,11 +129,7 @@ class ScreenshotsTest {
         paparazzi.snapshot(name = "settings_dark") {
             FieldReportTheme(darkTheme = true) {
                 SettingsContent(
-                    uiState = SettingsUiState(
-                        offlineModeSimulated = true,
-                        autoSyncWifi = true,
-                        compressPhotos = true
-                    ),
+                    uiState = SampleData.settingsState,
                     onDone = {},
                     onOfflineModeChange = {},
                     onAutoSyncChange = {},

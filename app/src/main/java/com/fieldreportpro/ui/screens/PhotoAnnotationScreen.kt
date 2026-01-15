@@ -46,9 +46,9 @@ import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.fieldreportpro.data.FakeReportRepository
 import com.fieldreportpro.ui.components.AttachmentRow
 import com.fieldreportpro.ui.components.OutlinePillButton
+import com.fieldreportpro.ui.sample.DemoAssets
 import com.fieldreportpro.ui.theme.AppDimens
 import com.fieldreportpro.ui.theme.FieldReportTheme
 import com.fieldreportpro.ui.theme.PrimaryGreen
@@ -122,7 +122,7 @@ private fun AnnotationCanvas() {
             .background(Color(0xFF1F262C), RoundedCornerShape(AppDimens.Corner20))
     ) {
         AsyncImage(
-            model = FakeReportRepository.mapPreviewUrl(),
+            model = DemoAssets.mapPreviewUri,
             contentDescription = null,
             modifier = Modifier.matchParentSize(),
             contentScale = ContentScale.Crop
@@ -255,7 +255,7 @@ private fun BottomStrip() {
                 onClick = {}
             )
             AttachmentRow(
-                attachments = FakeReportRepository.getAttachmentsPreview(),
+                attachments = DemoAssets.attachmentsPreview,
                 showAddTile = false
             )
         }

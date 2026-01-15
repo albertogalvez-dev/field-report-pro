@@ -6,4 +6,14 @@ data class ReportDetailUi(
     val locationLabel: String,
     val attachments: List<AttachmentUi>,
     val timeline: List<TimelineEventUi>
-)
+) {
+    companion object {
+        val Empty = ReportDetailUi(
+            report = ReportUi.Empty,
+            description = "",
+            locationLabel = "",
+            attachments = emptyList(),
+            timeline = emptyList()
+        )
+    }
+}

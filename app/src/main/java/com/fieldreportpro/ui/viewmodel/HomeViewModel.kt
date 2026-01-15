@@ -1,24 +1,35 @@
 package com.fieldreportpro.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.fieldreportpro.data.FakeReportRepository
+import androidx.lifecycle.viewModelScope
+import com.fieldreportpro.domain.ReportRepository
 import com.fieldreportpro.domain.ui_models.HomeSummaryUi
 import com.fieldreportpro.domain.ui_models.ReportUi
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 
 data class HomeUiState(
     val summary: HomeSummaryUi,
     val recentActivity: List<ReportUi>
 )
 
-class HomeViewModel : ViewModel() {
-    private val repository = FakeReportRepository
+class HomeViewModel(
+    private val repository: ReportRepository
+) : ViewModel() {
 
-    val uiState = HomeUiState(
-        summary = repository.getHomeSummary(),
-        recentActivity = repository.getRecentActivity()
+    val uiState: StateFlow<HomeUiState> = combine(
+        repository.observeHomeSummary(),
+        repository.observeRecentActivity()
+    ) { summary, recentActivity ->
+        HomeUiState(summary = summary, recentActivity = recentActivity)
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5_000),
+        HomeUiState(
+            summary = HomeSummaryUi(0, 0, 0),
+            recentActivity = emptyList()
+        )
     )
-
-    val settingsState: StateFlow<com.fieldreportpro.domain.ui_models.SettingsUiState> =
-        repository.settingsState
 }

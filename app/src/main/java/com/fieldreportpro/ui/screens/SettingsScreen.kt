@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fieldreportpro.AppViewModelProvider
 import com.fieldreportpro.domain.ui_models.SettingsUiState
 import com.fieldreportpro.ui.components.OutlinePillButton
 import com.fieldreportpro.ui.theme.AppDimens
@@ -41,7 +42,7 @@ import com.fieldreportpro.ui.viewmodel.SettingsViewModel
 fun SettingsScreen(
     onDone: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SettingsViewModel = viewModel()
+    viewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -177,7 +178,7 @@ internal fun SettingsContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = "Device ID: FRP-20489", style = MaterialTheme.typography.bodySmall, color = Color(0xFF9AA1A8))
-                Text(text = "Last synced 2 mins ago", style = MaterialTheme.typography.bodySmall, color = Color(0xFF9AA1A8))
+                Text(text = uiState.lastSyncLabel, style = MaterialTheme.typography.bodySmall, color = Color(0xFF9AA1A8))
             }
         }
     }
@@ -222,7 +223,8 @@ private fun SettingsPreview() {
             uiState = SettingsUiState(
                 offlineModeSimulated = false,
                 autoSyncWifi = true,
-                compressPhotos = true
+                compressPhotos = true,
+                lastSyncLabel = "Last synced 2 mins ago"
             ),
             onDone = {},
             onOfflineModeChange = {},
@@ -240,7 +242,8 @@ private fun SettingsPreviewDark() {
             uiState = SettingsUiState(
                 offlineModeSimulated = true,
                 autoSyncWifi = true,
-                compressPhotos = true
+                compressPhotos = true,
+                lastSyncLabel = "Last synced 2 mins ago"
             ),
             onDone = {},
             onOfflineModeChange = {},

@@ -11,4 +11,19 @@ data class ReportUi(
     val updatedLabel: String,
     val hasAttachments: Boolean,
     val attachmentsCount: Int
-)
+) {
+    companion object {
+        val Empty = ReportUi(
+            id = "",
+            refCode = "",
+            title = "",
+            location = "",
+            unit = "",
+            priority = PriorityUi.Med,
+            status = StatusUi.Draft,
+            updatedLabel = "",
+            hasAttachments = false,
+            attachmentsCount = 0
+        )
+    }
+}
