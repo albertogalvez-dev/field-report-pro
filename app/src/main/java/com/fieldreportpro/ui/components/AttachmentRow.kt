@@ -33,7 +33,8 @@ fun AttachmentRow(
     modifier: Modifier = Modifier,
     extraCount: Int = 0,
     showAddTile: Boolean = true,
-    onAttachmentClick: ((AttachmentUi) -> Unit)? = null
+    onAttachmentClick: ((AttachmentUi) -> Unit)? = null,
+    onAddClick: (() -> Unit)? = null
 ) {
     Row(
         modifier = modifier,
@@ -48,7 +49,7 @@ fun AttachmentRow(
             )
         }
         if (showAddTile) {
-            AttachmentAddTile()
+            AttachmentAddTile(onClick = { onAddClick?.invoke() })
         }
     }
 }
@@ -91,7 +92,7 @@ private fun AttachmentThumbnail(
 }
 
 @Composable
-private fun AttachmentAddTile() {
+private fun AttachmentAddTile(onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .size(74.dp)
@@ -106,7 +107,8 @@ private fun AttachmentAddTile() {
                     style = stroke,
                     cornerRadius = androidx.compose.ui.geometry.CornerRadius(16.dp.toPx())
                 )
-            },
+            }
+            .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Icon(

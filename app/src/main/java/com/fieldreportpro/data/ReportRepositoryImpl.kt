@@ -1,6 +1,7 @@
 package com.fieldreportpro.data
 
 import android.content.Context
+import android.net.Uri
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -199,16 +200,16 @@ class ReportRepositoryImpl(
         )
     }
 
-    override suspend fun addAttachment(reportId: String, uri: String) {
+    override suspend fun addAttachmentFromUri(reportId: String, uri: Uri): Boolean {
         if (attachmentDao.countByReportId(reportId) >= 3) {
-            return
+            return false
         }
         val now = System.currentTimeMillis()
         attachmentDao.insert(
             AttachmentEntity(
                 id = UUID.randomUUID().toString(),
                 reportId = reportId,
-                uri = uri,
+                uri = uri.toString(),
                 annotatedUri = null,
                 createdAt = now
             )
@@ -226,6 +227,35 @@ class ReportRepositoryImpl(
                 timestamp = now
             )
         )
+        return true
+    }
+
+    override suspend fun markAttachmentAnnotated(attachmentId: String, annotatedUri: Uri) {
+        val attachment = attachmentDao.getById(attachmentId) ?: return
+        val now = System.currentTimeMillis()
+        attachmentDao.updateAnnotatedUri(attachmentId, annotatedUri.toString())
+        val report = reportDao.getById(attachment.reportId)
+        if (report != null) {
+            reportDao.update(report.copy(updatedAt = now))
+        }
+        timelineDao.insert(
+            TimelineEventEntity(
+                id = UUID.randomUUID().toString(),
+                reportId = attachment.reportId,
+                type = TimelineEventTypeEntity.EDITED,
+                message = "Photo annotated",
+                timestamp = now
+            )
+        )
+    }
+
+    override suspend fun removeAttachment(attachmentId: String) {
+        val attachment = attachmentDao.getById(attachmentId) ?: return
+        attachmentDao.deleteById(attachmentId)
+        val report = reportDao.getById(attachment.reportId)
+        if (report != null) {
+            reportDao.update(report.copy(updatedAt = System.currentTimeMillis()))
+        }
     }
 
     override suspend fun queueForSync(reportId: String) {
@@ -301,8 +331,10 @@ private fun AttachmentEntity.toUi(): AttachmentUi {
     return AttachmentUi(
         id = id,
         reportId = reportId,
-        thumbnailResOrUrl = uri,
-        annotated = annotatedUri != null
+        thumbnailResOrUrl = annotatedUri ?: uri,
+        annotated = annotatedUri != null,
+        sourceUri = uri,
+        annotatedUri = annotatedUri
     )
 }
 

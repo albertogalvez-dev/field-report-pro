@@ -12,19 +12,25 @@ object DemoAssets {
             id = "demo-1",
             reportId = "demo",
             thumbnailResOrUrl = "android.resource://$packageName/drawable/demo_photo_1",
-            annotated = true
+            annotated = false,
+            sourceUri = "android.resource://$packageName/drawable/demo_photo_1",
+            annotatedUri = null
         ),
         AttachmentUi(
             id = "demo-2",
             reportId = "demo",
             thumbnailResOrUrl = "android.resource://$packageName/drawable/demo_photo_2",
-            annotated = false
+            annotated = false,
+            sourceUri = "android.resource://$packageName/drawable/demo_photo_2",
+            annotatedUri = null
         ),
         AttachmentUi(
             id = "demo-3",
             reportId = "demo",
             thumbnailResOrUrl = "android.resource://$packageName/drawable/demo_photo_3",
-            annotated = true
+            annotated = false,
+            sourceUri = "android.resource://$packageName/drawable/demo_photo_3",
+            annotatedUri = null
         )
     )
 }

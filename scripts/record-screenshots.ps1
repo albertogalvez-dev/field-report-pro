@@ -3,9 +3,14 @@ $ErrorActionPreference = "Stop"
 $root = Resolve-Path (Join-Path $PSScriptRoot "..")
 Push-Location $root
 
+$buildRoot = Join-Path $env:USERPROFILE ".fieldreportpro-build"
+$appBuildRoot = Join-Path $buildRoot "app"
+
 $cleanupPaths = @(
     (Join-Path $root "app\build\test-results"),
-    (Join-Path $root "app\build\reports\paparazzi")
+    (Join-Path $root "app\build\reports\paparazzi"),
+    (Join-Path $appBuildRoot "test-results"),
+    (Join-Path $appBuildRoot "reports\paparazzi")
 )
 foreach ($path in $cleanupPaths) {
     if (Test-Path $path) {
@@ -43,7 +48,9 @@ New-Item -ItemType Directory -Force -Path $destDir | Out-Null
 $sourceRoots = @(
     (Join-Path $root "app\src\test\snapshots"),
     (Join-Path $root "app\build\paparazzi"),
-    (Join-Path $root "app\build\reports\paparazzi")
+    (Join-Path $root "app\build\reports\paparazzi"),
+    (Join-Path $appBuildRoot "paparazzi"),
+    (Join-Path $appBuildRoot "reports\paparazzi")
 )
 $sourceRoots = $sourceRoots | Where-Object { Test-Path $_ }
 

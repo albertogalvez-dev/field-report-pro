@@ -3,12 +3,14 @@ package com.fieldreportpro.screenshots
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.fieldreportpro.ui.screens.HomeOverviewContent
-import com.fieldreportpro.ui.screens.PhotoAnnotationScreen
+import androidx.compose.material3.SnackbarHostState
+import com.fieldreportpro.ui.screens.PhotoAnnotationContent
 import com.fieldreportpro.ui.screens.ReportDetailContent
-import com.fieldreportpro.ui.screens.ReportFormScreen
+import com.fieldreportpro.ui.screens.ReportFormContent
 import com.fieldreportpro.ui.screens.ReportsListContent
 import com.fieldreportpro.ui.screens.SettingsContent
 import com.fieldreportpro.ui.screens.SyncCenterContent
+import com.fieldreportpro.ui.sample.DemoAssets
 import com.fieldreportpro.ui.sample.SampleData
 import com.fieldreportpro.ui.theme.FieldReportTheme
 import com.fieldreportpro.ui.viewmodel.ReportsFilters
@@ -87,10 +89,25 @@ class ScreenshotsTest {
     fun reportFormLight() {
         paparazzi.snapshot(name = "form") {
             FieldReportTheme {
-                ReportFormScreen(
+                ReportFormContent(
+                    reportTitle = "",
+                    onReportTitleChange = {},
+                    showError = false,
+                    selectedCategory = "Safety",
+                    onCategoryChange = {},
+                    categoryExpanded = false,
+                    onCategoryExpandedChange = {},
+                    selectedPriority = SampleData.reports.first().priority,
+                    onPriorityChange = {},
+                    description = "",
+                    onDescriptionChange = {},
+                    attachments = DemoAssets.attachmentsPreview,
+                    attachmentsCount = DemoAssets.attachmentsPreview.size,
+                    onAddAttachment = {},
                     onCancel = {},
-                    onSaveDraft = { _ -> },
-                    onQueueSync = { _ -> }
+                    onSaveDraft = {},
+                    onQueueSync = {},
+                    snackbarHostState = SnackbarHostState()
                 )
             }
         }
@@ -104,7 +121,9 @@ class ScreenshotsTest {
                     detail = SampleData.reportDetail,
                     onBack = {},
                     onEdit = {},
-                    onAnnotate = { _, _ -> }
+                    onAnnotate = { _, _ -> },
+                    onViewAll = {},
+                    snackbarHostState = SnackbarHostState()
                 )
             }
         }
@@ -142,10 +161,20 @@ class ScreenshotsTest {
     @Test
     fun annotateDark() {
         paparazzi.snapshot(name = "annotate_dark") {
-            PhotoAnnotationScreen(
-                onBack = {},
-                onSave = {}
-            )
+            FieldReportTheme(darkTheme = true) {
+                PhotoAnnotationContent(
+                    title = "OBSERVATION #142",
+                    subtitle = "Zone 4, Sector B",
+                    imageUri = DemoAssets.attachmentsPreview.first().thumbnailResOrUrl,
+                    attachments = SampleData.detailAttachments,
+                    selectedAttachmentId = SampleData.detailAttachments.first().id,
+                    showDemoOverlay = true,
+                    onBack = {},
+                    onSave = { _, _ -> },
+                    onAddPhoto = {},
+                    onSelectAttachment = {}
+                )
+            }
         }
     }
 }

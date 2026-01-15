@@ -90,31 +90,41 @@ object SampleData {
             id = "att-1",
             reportId = "1",
             thumbnailResOrUrl = "android.resource://com.fieldreportpro/drawable/demo_photo_1",
-            annotated = true
+            annotated = true,
+            sourceUri = "android.resource://com.fieldreportpro/drawable/demo_photo_1",
+            annotatedUri = "android.resource://com.fieldreportpro/drawable/demo_photo_1"
         ),
         AttachmentUi(
             id = "att-2",
             reportId = "1",
             thumbnailResOrUrl = "android.resource://com.fieldreportpro/drawable/demo_photo_2",
-            annotated = false
+            annotated = false,
+            sourceUri = "android.resource://com.fieldreportpro/drawable/demo_photo_2",
+            annotatedUri = null
         ),
         AttachmentUi(
             id = "att-3",
             reportId = "1",
             thumbnailResOrUrl = "android.resource://com.fieldreportpro/drawable/demo_photo_3",
-            annotated = true
+            annotated = true,
+            sourceUri = "android.resource://com.fieldreportpro/drawable/demo_photo_3",
+            annotatedUri = "android.resource://com.fieldreportpro/drawable/demo_photo_3"
         ),
         AttachmentUi(
             id = "att-4",
             reportId = "1",
             thumbnailResOrUrl = "android.resource://com.fieldreportpro/drawable/demo_photo_1",
-            annotated = false
+            annotated = false,
+            sourceUri = "android.resource://com.fieldreportpro/drawable/demo_photo_1",
+            annotatedUri = null
         ),
         AttachmentUi(
             id = "att-5",
             reportId = "1",
             thumbnailResOrUrl = "android.resource://com.fieldreportpro/drawable/demo_photo_2",
-            annotated = true
+            annotated = true,
+            sourceUri = "android.resource://com.fieldreportpro/drawable/demo_photo_2",
+            annotatedUri = "android.resource://com.fieldreportpro/drawable/demo_photo_2"
         )
     )
 

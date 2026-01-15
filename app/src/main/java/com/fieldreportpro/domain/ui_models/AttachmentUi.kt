@@ -4,5 +4,7 @@ data class AttachmentUi(
     val id: String,
     val reportId: String,
     val thumbnailResOrUrl: String,
-    val annotated: Boolean
+    val annotated: Boolean,
+    val sourceUri: String = thumbnailResOrUrl,
+    val annotatedUri: String? = if (annotated) thumbnailResOrUrl else null
 )

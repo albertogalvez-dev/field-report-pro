@@ -7,6 +7,7 @@ import com.fieldreportpro.domain.ui_models.ReportUi
 import com.fieldreportpro.domain.ui_models.SettingsUiState
 import com.fieldreportpro.domain.ui_models.SyncUiState
 import kotlinx.coroutines.flow.Flow
+import android.net.Uri
 
 interface ReportRepository {
     fun observeHomeSummary(): Flow<HomeSummaryUi>
@@ -17,7 +18,9 @@ interface ReportRepository {
     fun observeSyncState(): Flow<SyncUiState>
     suspend fun createDraft(formData: ReportFormData): String
     suspend fun updateDraft(id: String, formData: ReportFormData)
-    suspend fun addAttachment(reportId: String, uri: String)
+    suspend fun addAttachmentFromUri(reportId: String, uri: Uri): Boolean
+    suspend fun markAttachmentAnnotated(attachmentId: String, annotatedUri: Uri)
+    suspend fun removeAttachment(attachmentId: String)
     suspend fun queueForSync(reportId: String)
     suspend fun setOfflineModeSimulated(enabled: Boolean)
     suspend fun setAutoSyncWifi(enabled: Boolean)

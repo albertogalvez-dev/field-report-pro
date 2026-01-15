@@ -5,9 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -23,7 +21,6 @@ import com.fieldreportpro.ui.screens.ReportFormScreen
 import com.fieldreportpro.ui.screens.ReportsListScreen
 import com.fieldreportpro.ui.screens.SettingsScreen
 import com.fieldreportpro.ui.screens.SyncCenterScreen
-import kotlinx.coroutines.launch
 
 @Composable
 fun FieldReportProApp() {
@@ -31,10 +28,6 @@ fun FieldReportProApp() {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
     val showBottomBar = TopLevelDestination.items.any { it.route == currentRoute }
-    val app = LocalContext.current.applicationContext as FieldReportProApplication
-    val repository = app.container.repository
-    val scope = rememberCoroutineScope()
-
     Scaffold(
         bottomBar = {
             if (showBottomBar) {
@@ -83,17 +76,8 @@ fun FieldReportProApp() {
                 composable(Routes.ReportForm) {
                     ReportFormScreen(
                         onCancel = { navController.navigateUp() },
-                        onSaveDraft = { formData ->
-                            scope.launch { repository.createDraft(formData) }
-                            navController.navigateUp()
-                        },
-                        onQueueSync = { formData ->
-                            scope.launch {
-                                val reportId = repository.createDraft(formData)
-                                repository.queueForSync(reportId)
-                            }
-                            navController.navigateUp()
-                        }
+                        onSaveDraft = { navController.navigateUp() },
+                        onQueueSync = { navController.navigateUp() }
                     )
                 }
                 composable(
@@ -117,7 +101,11 @@ fun FieldReportProApp() {
                         navArgument("attachmentId") { defaultValue = "att-1" }
                     )
                 ) {
+                    val reportId = it.arguments?.getString("reportId") ?: "1"
+                    val attachmentId = it.arguments?.getString("attachmentId") ?: "att-1"
                     PhotoAnnotationScreen(
+                        reportId = reportId,
+                        attachmentId = attachmentId,
                         onBack = { navController.navigateUp() },
                         onSave = { navController.navigateUp() }
                     )

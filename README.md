@@ -1,4 +1,16 @@
 # Field Report Pro
+![CI](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)
+
+Offline-first field incident reporting app for Android.
+
+## Key Features
+
+- Offline-first storage with Room (reports, attachments, timeline)
+- Settings persistence via DataStore
+- WorkManager sync queue with progress
+- Photo attachments (gallery/camera) up to 3 per report
+- Photo annotation (circle/arrow/rect) saving annotated PNG
+- Deterministic screenshot pipeline with Paparazzi
 
 ## Screenshots
 
@@ -14,20 +26,15 @@
 | --- | --- |
 | ![Settings Dark](screenshots/settings_dark.png) | ![Annotation Dark](screenshots/annotate_dark.png) |
 
-## Offline-first architecture
+## Architecture
 
-- Room persists reports, attachments, and timeline events.
-- DataStore keeps settings and last sync timestamp.
-- WorkManager runs the simulated sync worker and updates DB state.
+- MVVM + Repository
+- Room + DataStore + WorkManager
+- See `docs/ARCHITECTURE.md`
 
-## Sync (simulated)
+## Run locally (Windows)
 
-- Queue reports (status -> PENDING_SYNC) from the form or retry in Sync Center.
-- "Sync now" enqueues WorkManager and updates progress + timeline.
-
-## Build
-
-1) Set up the Android SDK:
+1) Configure the Android SDK:
 
 ```
 ./scripts/setup-android-sdk.ps1
@@ -39,8 +46,26 @@
 ./gradlew assembleDebug
 ```
 
-3) Record screenshots:
+## Generate screenshots
 
 ```
 ./scripts/record-screenshots.ps1
 ```
+
+## Tests
+
+```
+./gradlew testDebugUnitTest
+./gradlew verifyPaparazziDebug
+./scripts/test-ci.ps1
+```
+
+## Troubleshooting
+
+See `docs/TROUBLESHOOTING.md`. Build outputs are stored in `%USERPROFILE%\.fieldreportpro-build`.
+
+## Roadmap
+
+- Multi-select attachment management
+- Sync scheduling policies
+- Export/share report summary

@@ -16,3 +16,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "FieldReportPro"
 include(":app")
+
+def buildRoot = new File(System.getProperty("user.home"), ".fieldreportpro-build")
+gradle.beforeProject { project ->
+    project.buildDir = new File(buildRoot, project.name)
+}

@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.CloudSync
 import androidx.compose.material.icons.outlined.ErrorOutline
@@ -90,7 +90,7 @@ internal fun SyncCenterContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = onBack) {
-                        Icon(imageVector = Icons.Outlined.ArrowBack, contentDescription = null)
+                        Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = null)
                     }
                     Text(
                         text = "Sync Center",
@@ -203,13 +203,15 @@ private fun SyncQueueItemCard(
             }
             Spacer(modifier = Modifier.height(6.dp))
             Text(text = item.subtitle, style = MaterialTheme.typography.bodySmall, color = Color(0xFF8A8A8A))
-            if (item.status == SyncItemStatus.Uploading && item.progress != null) {
-                Spacer(modifier = Modifier.height(10.dp))
-                LinearProgressIndicator(
-                    progress = item.progress,
-                    color = PrimaryGreen,
-                    modifier = Modifier.fillMaxWidth()
-                )
+            if (item.status == SyncItemStatus.Uploading) {
+                item.progress?.let { progress ->
+                    Spacer(modifier = Modifier.height(10.dp))
+                    LinearProgressIndicator(
+                        progress = { progress },
+                        color = PrimaryGreen,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
             if (item.status == SyncItemStatus.Failed) {
                 Spacer(modifier = Modifier.height(10.dp))

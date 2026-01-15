@@ -29,6 +29,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -36,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -45,24 +48,33 @@ import androidx.compose.ui.text.font.FontWeight
 import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.fieldreportpro.AppViewModelProvider
 import com.fieldreportpro.domain.ui_models.PriorityUi
 import com.fieldreportpro.domain.ui_models.ReportFormData
+import com.fieldreportpro.domain.ui_models.AttachmentUi
+import com.fieldreportpro.ui.components.AddPhotoBottomSheet
 import com.fieldreportpro.ui.components.AttachmentRow
 import com.fieldreportpro.ui.components.OutlinePillButton
 import com.fieldreportpro.ui.components.PrimaryPillButton
+import com.fieldreportpro.ui.components.rememberAttachmentPicker
 import com.fieldreportpro.ui.sample.DemoAssets
 import com.fieldreportpro.ui.theme.AppDimens
 import com.fieldreportpro.ui.theme.AppTextStyles
 import com.fieldreportpro.ui.theme.FieldReportTheme
 import com.fieldreportpro.ui.theme.PrimaryGreen
+import com.fieldreportpro.ui.viewmodel.ReportFormViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun ReportFormScreen(
     onCancel: () -> Unit,
     onSaveDraft: (ReportFormData) -> Unit,
     onQueueSync: (ReportFormData) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: ReportFormViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     var reportTitle by rememberSaveable { mutableStateOf("") }
     var showError by rememberSaveable { mutableStateOf(false) }
@@ -70,7 +82,129 @@ fun ReportFormScreen(
     var categoryExpanded by remember { mutableStateOf(false) }
     var selectedPriority by rememberSaveable { mutableStateOf(PriorityUi.Med) }
     var description by rememberSaveable { mutableStateOf("") }
+    var showAddPhotoSheet by remember { mutableStateOf(false) }
+    val attachments by viewModel.attachments.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val attachmentPicker = rememberAttachmentPicker { uri ->
+        scope.launch {
+            val added = viewModel.addAttachment(currentFormData(
+                reportTitle = reportTitle,
+                selectedCategory = selectedCategory,
+                selectedPriority = selectedPriority,
+                description = description
+            ), uri)
+            if (!added) {
+                snackbarHostState.showSnackbar("Maximum 3 photos per report")
+            }
+        }
+    }
 
+    AddPhotoBottomSheet(
+        show = showAddPhotoSheet,
+        onDismiss = { showAddPhotoSheet = false },
+        onTakePhoto = {
+            showAddPhotoSheet = false
+            attachmentPicker.launchCamera()
+        },
+        onPickPhoto = {
+            showAddPhotoSheet = false
+            attachmentPicker.launchGallery()
+        }
+    )
+
+    ReportFormContent(
+        reportTitle = reportTitle,
+        onReportTitleChange = {
+            reportTitle = it
+            if (showError) showError = reportTitle.isBlank()
+        },
+        showError = showError,
+        selectedCategory = selectedCategory,
+        onCategoryChange = { selectedCategory = it },
+        categoryExpanded = categoryExpanded,
+        onCategoryExpandedChange = { categoryExpanded = it },
+        selectedPriority = selectedPriority,
+        onPriorityChange = { selectedPriority = it },
+        description = description,
+        onDescriptionChange = { description = it },
+        attachments = attachments,
+        attachmentsCount = attachments.size,
+        onAddAttachment = { showAddPhotoSheet = true },
+        onCancel = onCancel,
+        onSaveDraft = {
+            showError = reportTitle.isBlank()
+            if (!showError) {
+                val formData = currentFormData(
+                    reportTitle = reportTitle,
+                    selectedCategory = selectedCategory,
+                    selectedPriority = selectedPriority,
+                    description = description
+                )
+                scope.launch {
+                    viewModel.saveDraft(formData)
+                    onSaveDraft(formData)
+                }
+            }
+        },
+        onQueueSync = {
+            showError = reportTitle.isBlank()
+            if (!showError) {
+                val formData = currentFormData(
+                    reportTitle = reportTitle,
+                    selectedCategory = selectedCategory,
+                    selectedPriority = selectedPriority,
+                    description = description
+                )
+                scope.launch {
+                    viewModel.queueForSync(formData)
+                    onQueueSync(formData)
+                }
+            }
+        },
+        snackbarHostState = snackbarHostState,
+        modifier = modifier
+    )
+}
+
+private fun currentFormData(
+    reportTitle: String,
+    selectedCategory: String,
+    selectedPriority: PriorityUi,
+    description: String
+): ReportFormData {
+    return ReportFormData(
+        title = reportTitle.trim(),
+        category = selectedCategory,
+        priority = selectedPriority,
+        locationText = "Zone 4, Sector B",
+        unit = "Unit 4",
+        description = description.trim()
+    )
+}
+
+@Composable
+internal fun ReportFormContent(
+    reportTitle: String,
+    onReportTitleChange: (String) -> Unit,
+    showError: Boolean,
+    selectedCategory: String,
+    onCategoryChange: (String) -> Unit,
+    categoryExpanded: Boolean,
+    onCategoryExpandedChange: (Boolean) -> Unit,
+    selectedPriority: PriorityUi,
+    onPriorityChange: (PriorityUi) -> Unit,
+    description: String,
+    onDescriptionChange: (String) -> Unit,
+    attachments: List<AttachmentUi>,
+    attachmentsCount: Int,
+    onAddAttachment: () -> Unit,
+    onCancel: () -> Unit,
+    onSaveDraft: () -> Unit,
+    onQueueSync: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier
+) {
     Box(modifier = modifier) {
         LazyColumn(
             modifier = Modifier.padding(horizontal = AppDimens.Spacing16),
@@ -100,10 +234,7 @@ fun ReportFormScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = reportTitle,
-                        onValueChange = {
-                            reportTitle = it
-                            if (showError) showError = reportTitle.isBlank()
-                        },
+                        onValueChange = onReportTitleChange,
                         placeholder = { Text(text = "Enter report title") },
                         isError = showError && reportTitle.isBlank(),
                         modifier = Modifier.fillMaxWidth(),
@@ -129,13 +260,16 @@ fun ReportFormScreen(
                                 .fillMaxWidth()
                                 .background(Color(0xFFF6F6F6), RoundedCornerShape(12.dp))
                                 .padding(horizontal = 12.dp, vertical = 10.dp)
-                                .clickable { categoryExpanded = true },
+                                .clickable { onCategoryExpandedChange(true) },
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(text = selectedCategory, modifier = Modifier.weight(1f))
                             Icon(imageVector = Icons.Outlined.ArrowDropDown, contentDescription = null)
                         }
-                        DropdownMenu(expanded = categoryExpanded, onDismissRequest = { categoryExpanded = false }) {
+                        DropdownMenu(
+                            expanded = categoryExpanded,
+                            onDismissRequest = { onCategoryExpandedChange(false) }
+                        ) {
                             listOf("Safety", "Maintenance", "Observation", "Quality").forEach { option ->
                                 DropdownMenuItem(
                                     text = { Text(text = option) },
@@ -149,8 +283,8 @@ fun ReportFormScreen(
                                         }
                                     },
                                     onClick = {
-                                        selectedCategory = option
-                                        categoryExpanded = false
+                                        onCategoryChange(option)
+                                        onCategoryExpandedChange(false)
                                     }
                                 )
                             }
@@ -166,25 +300,25 @@ fun ReportFormScreen(
                         PrioritySegment(
                             label = "Low",
                             selected = selectedPriority == PriorityUi.Low,
-                            onClick = { selectedPriority = PriorityUi.Low },
+                            onClick = { onPriorityChange(PriorityUi.Low) },
                             modifier = Modifier.weight(1f)
                         )
                         PrioritySegment(
                             label = "Med",
                             selected = selectedPriority == PriorityUi.Med,
-                            onClick = { selectedPriority = PriorityUi.Med },
+                            onClick = { onPriorityChange(PriorityUi.Med) },
                             modifier = Modifier.weight(1f)
                         )
                         PrioritySegment(
                             label = "High",
                             selected = selectedPriority == PriorityUi.High,
-                            onClick = { selectedPriority = PriorityUi.High },
+                            onClick = { onPriorityChange(PriorityUi.High) },
                             modifier = Modifier.weight(1f)
                         )
                         PrioritySegment(
                             label = "Crit",
                             selected = selectedPriority == PriorityUi.Crit,
-                            onClick = { selectedPriority = PriorityUi.Crit },
+                            onClick = { onPriorityChange(PriorityUi.Crit) },
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -232,7 +366,7 @@ fun ReportFormScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = description,
-                        onValueChange = { description = it },
+                        onValueChange = onDescriptionChange,
                         placeholder = { Text(text = "Add a detailed description...") },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -248,46 +382,31 @@ fun ReportFormScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(text = "Attachments", style = AppTextStyles.CardTitle)
-                        Text(text = "3 Files", style = MaterialTheme.typography.bodySmall, color = Color(0xFF7A7A7A))
+                        Text(
+                            text = "$attachmentsCount Files",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFF7A7A7A)
+                        )
                     }
                     Spacer(modifier = Modifier.height(12.dp))
-                    AttachmentRow(attachments = DemoAssets.attachmentsPreview)
+                    AttachmentRow(
+                        attachments = attachments,
+                        onAddClick = onAddAttachment
+                    )
                 }
             }
         }
 
         BottomActionBar(
-            onSaveDraft = {
-                showError = reportTitle.isBlank()
-                if (!showError) {
-                    onSaveDraft(
-                        ReportFormData(
-                            title = reportTitle.trim(),
-                            category = selectedCategory,
-                            priority = selectedPriority,
-                            locationText = "Zone 4, Sector B",
-                            unit = "Unit 4",
-                            description = description.trim()
-                        )
-                    )
-                }
-            },
-            onQueueSync = {
-                showError = reportTitle.isBlank()
-                if (!showError) {
-                    onQueueSync(
-                        ReportFormData(
-                            title = reportTitle.trim(),
-                            category = selectedCategory,
-                            priority = selectedPriority,
-                            locationText = "Zone 4, Sector B",
-                            unit = "Unit 4",
-                            description = description.trim()
-                        )
-                    )
-                }
-            },
+            onSaveDraft = onSaveDraft,
+            onQueueSync = onQueueSync,
             modifier = Modifier.align(Alignment.BottomCenter)
+        )
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 104.dp)
         )
     }
 }
@@ -389,10 +508,25 @@ private fun BottomActionBar(
 @Composable
 private fun ReportFormPreview() {
     FieldReportTheme {
-        ReportFormScreen(
+        ReportFormContent(
+            reportTitle = "",
+            onReportTitleChange = {},
+            showError = false,
+            selectedCategory = "Safety",
+            onCategoryChange = {},
+            categoryExpanded = false,
+            onCategoryExpandedChange = {},
+            selectedPriority = PriorityUi.Med,
+            onPriorityChange = {},
+            description = "",
+            onDescriptionChange = {},
+            attachments = DemoAssets.attachmentsPreview,
+            attachmentsCount = 3,
+            onAddAttachment = {},
             onCancel = {},
-            onSaveDraft = { _ -> },
-            onQueueSync = { _ -> }
+            onSaveDraft = {},
+            onQueueSync = {},
+            snackbarHostState = SnackbarHostState()
         )
     }
 }
@@ -401,10 +535,25 @@ private fun ReportFormPreview() {
 @Composable
 private fun ReportFormPreviewDark() {
     FieldReportTheme(darkTheme = true) {
-        ReportFormScreen(
+        ReportFormContent(
+            reportTitle = "",
+            onReportTitleChange = {},
+            showError = false,
+            selectedCategory = "Safety",
+            onCategoryChange = {},
+            categoryExpanded = false,
+            onCategoryExpandedChange = {},
+            selectedPriority = PriorityUi.Med,
+            onPriorityChange = {},
+            description = "",
+            onDescriptionChange = {},
+            attachments = DemoAssets.attachmentsPreview,
+            attachmentsCount = 3,
+            onAddAttachment = {},
             onCancel = {},
-            onSaveDraft = { _ -> },
-            onQueueSync = { _ -> }
+            onSaveDraft = {},
+            onQueueSync = {},
+            snackbarHostState = SnackbarHostState()
         )
     }
 }

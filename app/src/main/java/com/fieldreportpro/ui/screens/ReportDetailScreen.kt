@@ -1,6 +1,7 @@
 package com.fieldreportpro.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.Card
@@ -25,10 +26,16 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,6 +57,8 @@ import com.fieldreportpro.ui.components.PrimaryPillButton
 import com.fieldreportpro.ui.components.PriorityChip
 import com.fieldreportpro.ui.components.StatusChip
 import com.fieldreportpro.ui.components.TimelineCard
+import com.fieldreportpro.ui.components.AddPhotoBottomSheet
+import com.fieldreportpro.ui.components.rememberAttachmentPicker
 import com.fieldreportpro.ui.theme.AppDimens
 import com.fieldreportpro.ui.theme.AppTextStyles
 import com.fieldreportpro.ui.theme.FieldReportTheme
@@ -57,6 +66,7 @@ import com.fieldreportpro.ui.theme.HighPriority
 import com.fieldreportpro.ui.theme.PrimaryGreen
 import com.fieldreportpro.ui.viewmodel.DetailViewModel
 import com.fieldreportpro.ui.viewmodel.DetailViewModelFactory
+import kotlinx.coroutines.launch
 
 @Composable
 fun ReportDetailScreen(
@@ -70,12 +80,38 @@ fun ReportDetailScreen(
     val viewModel: DetailViewModel =
         viewModel(factory = DetailViewModelFactory(app.container.repository, reportId))
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    var showAddPhotoSheet by remember { mutableStateOf(false) }
+    val attachmentPicker = rememberAttachmentPicker { uri ->
+        scope.launch {
+            val added = viewModel.addAttachment(uri)
+            if (!added) {
+                snackbarHostState.showSnackbar("Maximum 3 photos per report")
+            }
+        }
+    }
+
+    AddPhotoBottomSheet(
+        show = showAddPhotoSheet,
+        onDismiss = { showAddPhotoSheet = false },
+        onTakePhoto = {
+            showAddPhotoSheet = false
+            attachmentPicker.launchCamera()
+        },
+        onPickPhoto = {
+            showAddPhotoSheet = false
+            attachmentPicker.launchGallery()
+        }
+    )
 
     ReportDetailContent(
         detail = uiState.reportDetail,
         onBack = onBack,
         onEdit = onEdit,
         onAnnotate = onAnnotate,
+        onViewAll = { showAddPhotoSheet = true },
+        snackbarHostState = snackbarHostState,
         modifier = modifier
     )
 }
@@ -86,6 +122,8 @@ internal fun ReportDetailContent(
     onBack: () -> Unit,
     onEdit: () -> Unit,
     onAnnotate: (String, String) -> Unit,
+    onViewAll: () -> Unit,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     onSyncNow: () -> Unit = {}
 ) {
@@ -106,7 +144,7 @@ internal fun ReportDetailContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = onBack) {
-                        Icon(imageVector = Icons.Outlined.ArrowBack, contentDescription = null)
+                        Icon(imageVector = Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = null)
                     }
                     Text(
                         text = "Report Details",
@@ -128,7 +166,11 @@ internal fun ReportDetailContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = "Photos", style = AppTextStyles.SectionTitle)
-                    Text(text = "View All", color = PrimaryGreen)
+                    Text(
+                        text = "View All",
+                        color = PrimaryGreen,
+                        modifier = Modifier.clickable { onViewAll() }
+                    )
                 }
             }
             item {
@@ -151,6 +193,12 @@ internal fun ReportDetailContent(
             onEdit = onEdit,
             onSyncNow = onSyncNow,
             modifier = Modifier.align(Alignment.BottomCenter)
+        )
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 104.dp)
         )
     }
 }
@@ -307,7 +355,9 @@ private fun ReportDetailPreview() {
             ),
             onBack = {},
             onEdit = {},
-            onAnnotate = { _, _ -> }
+            onAnnotate = { _, _ -> },
+            onViewAll = {},
+            snackbarHostState = SnackbarHostState()
         )
     }
 }
@@ -337,7 +387,9 @@ private fun ReportDetailPreviewDark() {
             ),
             onBack = {},
             onEdit = {},
-            onAnnotate = { _, _ -> }
+            onAnnotate = { _, _ -> },
+            onViewAll = {},
+            snackbarHostState = SnackbarHostState()
         )
     }
 }
