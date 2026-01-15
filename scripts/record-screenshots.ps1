@@ -104,19 +104,32 @@ $html = @"
   <title>Field Report Pro — Screenshot Preview</title>
   <style>
     :root { color-scheme: light; }
-    body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; color: #1f1f1f; }
+    body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; color: #1f1f1f; background: #F6F7F9; }
+    body.dark-canvas { background: #0E1114; color: #EAEAEA; }
+    body.dark-canvas p,
+    body.dark-canvas .label,
+    body.dark-canvas .hint { color: #C9D1D9; }
     h1 { font-size: 20px; margin-bottom: 6px; }
     p { color: #5a5a5a; margin-top: 0; }
+    .toolbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+    .toggle { border: 1px solid #d2d8df; background: #fff; border-radius: 999px; padding: 6px 12px; font-size: 12px; cursor: pointer; }
+    body.dark-canvas .toggle { background: #141A1F; border-color: #2A333C; color: #EAEAEA; }
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-    .card { border: 1px solid #e5e5e5; border-radius: 12px; padding: 12px; background: #fff; }
+    .card { border: 1px solid #d8dde3; border-radius: 12px; padding: 12px; background: #fff; box-shadow: 0 2px 10px rgba(15, 18, 20, 0.06); }
+    body.dark-canvas .card { background: #141A1F; border-color: #1F2730; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.45); }
     img { width: 100%; height: auto; border-radius: 8px; display: block; }
     .label { margin-top: 8px; font-size: 12px; color: #444; text-align: center; }
     .hint { margin-top: 16px; font-size: 13px; color: #3d3d3d; }
   </style>
 </head>
 <body>
-  <h1>Screenshot Preview</h1>
-  <p>Review the images below. If they look good, confirm to copy them into <code>/screenshots</code>.</p>
+  <div class="toolbar">
+    <div>
+      <h1>Screenshot Preview</h1>
+      <p>Review the images below. If they look good, confirm to copy them into <code>/screenshots</code>.</p>
+    </div>
+    <button class="toggle" id="toggleCanvas" type="button">Dark canvas</button>
+  </div>
   <div class="grid">
     <div class="card"><a href="home_light.png"><img src="home_light.png" alt="home_light" /></a><div class="label">home_light</div></div>
     <div class="card"><a href="home_dark.png"><img src="home_dark.png" alt="home_dark" /></a><div class="label">home_dark</div></div>
@@ -128,6 +141,17 @@ $html = @"
     <div class="card"><a href="annotate_dark.png"><img src="annotate_dark.png" alt="annotate_dark" /></a><div class="label">annotate_dark</div></div>
   </div>
   <div class="hint">If everything looks correct, confirm in the terminal to update <code>/screenshots</code>.</div>
+  <script>
+    const button = document.getElementById("toggleCanvas");
+    const applyMode = (enabled) => {
+      document.body.classList.toggle("dark-canvas", enabled);
+      button.textContent = enabled ? "Light canvas" : "Dark canvas";
+    };
+    button.addEventListener("click", () => {
+      applyMode(!document.body.classList.contains("dark-canvas"));
+    });
+    applyMode(false);
+  </script>
 </body>
 </html>
 "@
