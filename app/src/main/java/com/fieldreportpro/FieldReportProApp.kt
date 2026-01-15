@@ -1,0 +1,111 @@
+package com.fieldreportpro
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.fieldreportpro.ui.navigation.BottomNavBar
+import com.fieldreportpro.ui.navigation.Routes
+import com.fieldreportpro.ui.navigation.TopLevelDestination
+import com.fieldreportpro.ui.screens.HomeOverviewScreen
+import com.fieldreportpro.ui.screens.PhotoAnnotationScreen
+import com.fieldreportpro.ui.screens.ReportDetailScreen
+import com.fieldreportpro.ui.screens.ReportFormScreen
+import com.fieldreportpro.ui.screens.ReportsListScreen
+import com.fieldreportpro.ui.screens.SettingsScreen
+import com.fieldreportpro.ui.screens.SyncCenterScreen
+
+@Composable
+fun FieldReportProApp() {
+    val navController = rememberNavController()
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry?.destination?.route
+    val showBottomBar = TopLevelDestination.items.any { it.route == currentRoute }
+
+    Scaffold(
+        bottomBar = {
+            if (showBottomBar) {
+                BottomNavBar(
+                    currentRoute = currentRoute,
+                    onNavigate = { route ->
+                        if (route != currentRoute) {
+                            navController.navigate(route) {
+                                popUpTo(Routes.Home) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    }
+                )
+            }
+        }
+    ) { innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding)) {
+            NavHost(
+                navController = navController,
+                startDestination = Routes.Home
+            ) {
+                composable(Routes.Home) {
+                    HomeOverviewScreen(
+                        onCreateReport = { navController.navigate(Routes.ReportForm) },
+                        onOpenReport = { reportId -> navController.navigate(Routes.reportDetail(reportId)) }
+                    )
+                }
+                composable(Routes.Reports) {
+                    ReportsListScreen(
+                        onCreateReport = { navController.navigate(Routes.ReportForm) },
+                        onOpenReport = { reportId -> navController.navigate(Routes.reportDetail(reportId)) }
+                    )
+                }
+                composable(Routes.Sync) {
+                    SyncCenterScreen(
+                        onBack = { navController.navigateUp() }
+                    )
+                }
+                composable(Routes.Settings) {
+                    SettingsScreen(
+                        onDone = { navController.navigateUp() }
+                    )
+                }
+                composable(Routes.ReportForm) {
+                    ReportFormScreen(
+                        onCancel = { navController.navigateUp() },
+                        onSaveDraft = { navController.navigateUp() },
+                        onQueueSync = { navController.navigateUp() }
+                    )
+                }
+                composable(
+                    route = Routes.ReportDetail,
+                    arguments = listOf(navArgument("id") { defaultValue = "1" })
+                ) {
+                    ReportDetailScreen(
+                        onBack = { navController.navigateUp() },
+                        onEdit = { navController.navigate(Routes.ReportForm) },
+                        onAnnotate = { reportId, attachmentId ->
+                            navController.navigate(Routes.annotate(reportId, attachmentId))
+                        }
+                    )
+                }
+                composable(
+                    route = Routes.Annotate,
+                    arguments = listOf(
+                        navArgument("reportId") { defaultValue = "1" },
+                        navArgument("attachmentId") { defaultValue = "att-1" }
+                    )
+                ) {
+                    PhotoAnnotationScreen(
+                        onBack = { navController.navigateUp() },
+                        onSave = { navController.navigateUp() }
+                    )
+                }
+            }
+        }
+    }
+}

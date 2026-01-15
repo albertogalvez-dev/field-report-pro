@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Field Report Pro - Home Overview</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2e7f33",
+                        "background-light": "#f8f7f7",
+                        "background-dark": "#1a1f23",
+                        "surface-light": "#ffffff",
+                        "text-main": "#2E2E2E",
+                        "text-sub": "#7A7A7A",
+                        "offline-bg": "#F5EA98",
+                        "draft-bg": "#FFF4E5", 
+                        "draft-text": "#B36B00",
+                        "pending-bg": "#E3F2FD",
+                        "pending-text": "#1565C0",
+                        "synced-bg": "#E8F5E9",
+                        "synced-text": "#2e7f33",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "2xl": "1.5rem", "full": "9999px"},
+                    boxShadow: {
+                        'soft': '0 4px 20px rgba(0, 0, 0, 0.05)',
+                        'soft-hover': '0 8px 25px rgba(0, 0, 0, 0.08)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+<!-- Mobile Frame -->
+<div class="relative w-full max-w-md h-[100dvh] bg-background-light dark:bg-background-dark overflow-hidden flex flex-col shadow-2xl sm:rounded-[3rem] sm:h-[95vh] sm:border-[8px] sm:border-gray-900 group/design-root">
+<!-- Status Bar Area (simulated) -->
+<div class="h-12 w-full bg-background-light dark:bg-background-dark shrink-0"></div>
+<!-- Top App Bar -->
+<div class="px-5 py-3 flex items-center justify-between bg-background-light dark:bg-background-dark sticky top-0 z-20">
+<h2 class="text-text-main dark:text-white text-2xl font-bold tracking-tight">Reports</h2>
+<div class="flex gap-3">
+<button class="flex items-center justify-center p-2 rounded-full hover:bg-black/5 text-text-main dark:text-white transition-colors">
+<span class="material-symbols-outlined !text-[26px]">search</span>
+</button>
+<button class="flex items-center justify-center p-2 rounded-full hover:bg-black/5 text-text-main dark:text-white transition-colors relative">
+<span class="material-symbols-outlined !text-[26px]">filter_list</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full ring-2 ring-white"></span>
+</button>
+</div>
+</div>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto hide-scrollbar pb-24 px-5">
+<!-- Offline Mode Banner -->
+<div class="mt-2 mb-6 p-4 rounded-xl bg-offline-bg/80 border border-yellow-200/50 flex items-start gap-3 shadow-sm backdrop-blur-sm">
+<div class="bg-yellow-100 p-2 rounded-full text-yellow-700 shrink-0">
+<span class="material-symbols-outlined text-[20px]">wifi_off</span>
+</div>
+<div class="flex flex-col gap-1">
+<p class="text-[#5D4037] text-sm font-bold leading-tight">Offline Mode</p>
+<p class="text-[#795548] text-xs font-medium leading-relaxed">Changes will sync automatically when connection is restored.</p>
+</div>
+<button class="ml-auto text-[#5D4037] text-xs font-bold underline decoration-dotted underline-offset-2">Sync Now</button>
+</div>
+<!-- Stats (Bento Grid) -->
+<div class="grid grid-cols-2 gap-4 mb-8">
+<!-- Large Card (Synced) -->
+<div class="col-span-2 bg-surface-light dark:bg-zinc-800 p-5 rounded-2xl shadow-soft flex items-center justify-between border border-transparent dark:border-zinc-700">
+<div class="flex flex-col gap-1">
+<span class="text-text-sub dark:text-gray-400 text-sm font-medium">Synced Reports</span>
+<span class="text-3xl font-bold text-text-main dark:text-white tracking-tight">128</span>
+</div>
+<div class="h-12 w-12 rounded-full bg-synced-bg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">cloud_done</span>
+</div>
+</div>
+<!-- Small Card (Drafts) -->
+<div class="bg-surface-light dark:bg-zinc-800 p-5 rounded-2xl shadow-soft flex flex-col gap-3 border border-transparent dark:border-zinc-700 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-3 opacity-10">
+<span class="material-symbols-outlined text-4xl text-draft-text">edit_document</span>
+</div>
+<span class="text-text-sub dark:text-gray-400 text-sm font-medium">Drafts</span>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-bold text-text-main dark:text-white">3</span>
+<span class="text-xs font-bold text-draft-text bg-draft-bg px-2 py-0.5 rounded-full mb-1">Action</span>
+</div>
+</div>
+<!-- Small Card (Pending) -->
+<div class="bg-surface-light dark:bg-zinc-800 p-5 rounded-2xl shadow-soft flex flex-col gap-3 border border-transparent dark:border-zinc-700 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-3 opacity-10">
+<span class="material-symbols-outlined text-4xl text-pending-text">hourglass_top</span>
+</div>
+<span class="text-text-sub dark:text-gray-400 text-sm font-medium">Pending</span>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-bold text-text-main dark:text-white">1</span>
+<span class="text-xs font-bold text-pending-text bg-pending-bg px-2 py-0.5 rounded-full mb-1">Wait</span>
+</div>
+</div>
+</div>
+<!-- Recent Reports Header -->
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-text-main dark:text-white text-lg font-bold">Recent Activity</h3>
+<span class="text-primary text-sm font-semibold cursor-pointer">View All</span>
+</div>
+<!-- Reports List -->
+<div class="flex flex-col gap-4">
+<!-- Report Card 1: Draft / High Priority -->
+<div class="bg-surface-light dark:bg-zinc-800 p-4 rounded-xl shadow-soft hover:shadow-soft-hover transition-all duration-300 border border-transparent dark:border-zinc-700 group cursor-pointer">
+<div class="flex justify-between items-start mb-3">
+<div class="flex-1 pr-2">
+<h4 class="text-text-main dark:text-white font-semibold text-base leading-tight mb-1 group-hover:text-primary transition-colors">Safety Inspection - Unit 4</h4>
+<div class="flex items-center gap-1 text-text-sub dark:text-gray-400 text-xs">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<span>Sector 7, North Wing</span>
+</div>
+</div>
+<span class="shrink-0 inline-flex items-center gap-1 bg-red-50 text-red-600 px-2 py-1 rounded-lg text-xs font-bold border border-red-100">
+<span class="material-symbols-outlined text-[14px] fill-current">priority_high</span>
+                            High
+                        </span>
+</div>
+<hr class="border-gray-100 dark:border-zinc-700 my-3"/>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-draft-bg text-draft-text">
+<span class="w-1.5 h-1.5 rounded-full bg-draft-text"></span>
+                                Draft
+                            </span>
+</div>
+<span class="text-text-sub dark:text-gray-500 text-xs font-medium">20 mins ago</span>
+</div>
+</div>
+<!-- Report Card 2: Pending / Medium Priority -->
+<div class="bg-surface-light dark:bg-zinc-800 p-4 rounded-xl shadow-soft hover:shadow-soft-hover transition-all duration-300 border border-transparent dark:border-zinc-700 group cursor-pointer">
+<div class="flex justify-between items-start mb-3">
+<div class="flex-1 pr-2">
+<h4 class="text-text-main dark:text-white font-semibold text-base leading-tight mb-1 group-hover:text-primary transition-colors">Maintenance Request - Pump B</h4>
+<div class="flex items-center gap-1 text-text-sub dark:text-gray-400 text-xs">
+<span class="material-symbols-outlined text-[14px]">water_drop</span>
+<span>Main Facility, Pump Room</span>
+</div>
+</div>
+<span class="shrink-0 inline-flex items-center gap-1 bg-gray-100 text-gray-600 px-2 py-1 rounded-lg text-xs font-bold border border-gray-200">
+                            Medium
+                        </span>
+</div>
+<hr class="border-gray-100 dark:border-zinc-700 my-3"/>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-pending-bg text-pending-text">
+<span class="w-1.5 h-1.5 rounded-full bg-pending-text animate-pulse"></span>
+                                Pending
+                            </span>
+</div>
+<span class="text-text-sub dark:text-gray-500 text-xs font-medium">2 hours ago</span>
+</div>
+</div>
+<!-- Report Card 3: Synced / Low Priority -->
+<div class="bg-surface-light dark:bg-zinc-800 p-4 rounded-xl shadow-soft hover:shadow-soft-hover transition-all duration-300 border border-transparent dark:border-zinc-700 group cursor-pointer opacity-80 hover:opacity-100">
+<div class="flex justify-between items-start mb-3">
+<div class="flex-1 pr-2">
+<h4 class="text-text-main dark:text-white font-semibold text-base leading-tight mb-1 group-hover:text-primary transition-colors">Daily Log - Sector 7</h4>
+<div class="flex items-center gap-1 text-text-sub dark:text-gray-400 text-xs">
+<span class="material-symbols-outlined text-[14px]">calendar_today</span>
+<span>Operations Desk</span>
+</div>
+</div>
+<span class="shrink-0 inline-flex items-center gap-1 bg-gray-50 text-gray-400 px-2 py-1 rounded-lg text-xs font-bold border border-gray-100">
+                            Low
+                        </span>
+</div>
+<hr class="border-gray-100 dark:border-zinc-700 my-3"/>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-synced-bg text-synced-text">
+<span class="material-symbols-outlined text-[14px]">check</span>
+                                Synced
+                            </span>
+</div>
+<span class="text-text-sub dark:text-gray-500 text-xs font-medium">Yesterday</span>
+</div>
+</div>
+<!-- Report Card 4: Synced / Low Priority -->
+<div class="bg-surface-light dark:bg-zinc-800 p-4 rounded-xl shadow-soft hover:shadow-soft-hover transition-all duration-300 border border-transparent dark:border-zinc-700 group cursor-pointer opacity-80 hover:opacity-100">
+<div class="flex justify-between items-start mb-3">
+<div class="flex-1 pr-2">
+<h4 class="text-text-main dark:text-white font-semibold text-base leading-tight mb-1 group-hover:text-primary transition-colors">Incident Report - Spill</h4>
+<div class="flex items-center gap-1 text-text-sub dark:text-gray-400 text-xs">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+<span>East Corridor</span>
+</div>
+</div>
+<span class="shrink-0 inline-flex items-center gap-1 bg-gray-50 text-gray-400 px-2 py-1 rounded-lg text-xs font-bold border border-gray-100">
+                            Low
+                        </span>
+</div>
+<hr class="border-gray-100 dark:border-zinc-700 my-3"/>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-synced-bg text-synced-text">
+<span class="material-symbols-outlined text-[14px]">check</span>
+                                Synced
+                            </span>
+</div>
+<span class="text-text-sub dark:text-gray-500 text-xs font-medium">2 days ago</span>
+</div>
+</div>
+</div>
+<!-- Bottom spacer for content to not be hidden by nav -->
+<div class="h-8"></div>
+</div>
+<!-- FAB -->
+<button class="absolute bottom-24 right-5 w-14 h-14 bg-primary rounded-2xl shadow-lg shadow-primary/30 flex items-center justify-center text-white z-30 hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<!-- Bottom Navigation -->
+<div class="bg-surface-light dark:bg-background-dark border-t border-gray-100 dark:border-zinc-800 px-6 py-2 flex justify-between items-center shrink-0 z-20 pb-6 sm:pb-2">
+<button class="flex flex-col items-center gap-1 p-2 text-primary">
+<span class="material-symbols-outlined text-2xl fill-1">home</span>
+<span class="text-[10px] font-medium">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 p-2 text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-2xl">map</span>
+<span class="text-[10px] font-medium">Map</span>
+</button>
+<button class="flex flex-col items-center gap-1 p-2 text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-2xl">notifications</span>
+<span class="text-[10px] font-medium">Alerts</span>
+</button>
+<button class="flex flex-col items-center gap-1 p-2 text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-2xl">settings</span>
+<span class="text-[10px] font-medium">Settings</span>
+</button>
+</div>
+</div>
+</body></html>
