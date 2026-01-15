@@ -6,8 +6,8 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import com.fieldreportpro.ui.theme.PrimaryGreen
+import com.fieldreportpro.ui.theme.SyncedBg
 
 @Composable
 fun BottomNavBar(
@@ -32,7 +32,7 @@ fun BottomNavBar(
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = PrimaryGreen,
                     selectedTextColor = PrimaryGreen,
-                    indicatorColor = Color(0xFFE8F5E9)
+                    indicatorColor = SyncedBg
                 )
             )
         }

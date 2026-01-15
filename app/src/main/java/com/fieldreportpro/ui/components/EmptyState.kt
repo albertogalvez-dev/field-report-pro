@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,27 +40,27 @@ fun EmptyState(
         Box(
             modifier = Modifier
                 .size(120.dp)
-                .drawDashedCircle(Color(0xFFE0E0E0))
+                .drawDashedCircle(MaterialTheme.colorScheme.outline)
         ) {
             Surface(
                 modifier = Modifier
                     .size(84.dp)
                     .align(Alignment.Center),
                 shape = CircleShape,
-                color = Color(0xFFF7F7F7),
-                border = BorderStroke(1.dp, Color(0xFFE6E6E6))
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = Icons.Outlined.Description,
                         contentDescription = null,
-                        tint = Color(0xFFB0B0B0),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(40.dp)
                     )
                     Icon(
                         imageVector = Icons.Outlined.Search,
                         contentDescription = null,
-                        tint = Color(0xFFB0B0B0),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
                             .size(20.dp)
                             .align(Alignment.BottomEnd)

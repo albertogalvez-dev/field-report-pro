@@ -27,7 +27,7 @@ class ScreenshotsTest {
     @Test
     fun homeLight() {
         paparazzi.snapshot(name = "home_light") {
-            FieldReportTheme {
+            FieldReportTheme(darkTheme = false) {
                 HomeOverviewContent(
                     summaryCount = SampleData.homeSummary.syncedCount.toString(),
                     draftCount = SampleData.homeSummary.draftCount.toString(),
@@ -61,7 +61,7 @@ class ScreenshotsTest {
     @Test
     fun reportsEmptyState() {
         paparazzi.snapshot(name = "empty_state") {
-            FieldReportTheme {
+            FieldReportTheme(darkTheme = false) {
                 ReportsListContent(
                     onCreateReport = {},
                     onOpenReport = {},
@@ -88,7 +88,7 @@ class ScreenshotsTest {
     @Test
     fun reportFormLight() {
         paparazzi.snapshot(name = "form") {
-            FieldReportTheme {
+            FieldReportTheme(darkTheme = false) {
                 ReportFormContent(
                     reportTitle = "",
                     onReportTitleChange = {},
@@ -116,7 +116,7 @@ class ScreenshotsTest {
     @Test
     fun reportDetailLight() {
         paparazzi.snapshot(name = "detail") {
-            FieldReportTheme {
+            FieldReportTheme(darkTheme = false) {
                 ReportDetailContent(
                     detail = SampleData.reportDetail,
                     onBack = {},
@@ -132,7 +132,7 @@ class ScreenshotsTest {
     @Test
     fun syncCenterLight() {
         paparazzi.snapshot(name = "sync") {
-            FieldReportTheme {
+            FieldReportTheme(darkTheme = false) {
                 SyncCenterContent(
                     uiState = SampleData.syncState,
                     onBack = {},

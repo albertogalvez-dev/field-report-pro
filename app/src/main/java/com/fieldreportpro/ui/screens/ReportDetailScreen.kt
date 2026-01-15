@@ -38,7 +38,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,6 +60,8 @@ import com.fieldreportpro.ui.components.AddPhotoBottomSheet
 import com.fieldreportpro.ui.components.rememberAttachmentPicker
 import com.fieldreportpro.ui.theme.AppDimens
 import com.fieldreportpro.ui.theme.AppTextStyles
+import com.fieldreportpro.ui.theme.DraftBg
+import com.fieldreportpro.ui.theme.DraftText
 import com.fieldreportpro.ui.theme.FieldReportTheme
 import com.fieldreportpro.ui.theme.HighPriority
 import com.fieldreportpro.ui.theme.PrimaryGreen
@@ -222,7 +223,11 @@ private fun DetailHeaderCard(report: ReportUi) {
             ) {
                 Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                     Text(text = report.refCode, style = MaterialTheme.typography.labelLarge)
-                    Text(text = report.unit, style = MaterialTheme.typography.labelLarge, color = Color(0xFF8A8A8A))
+                    Text(
+                        text = report.unit,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
                 Text(text = report.title, style = MaterialTheme.typography.titleLarge)
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -230,10 +235,14 @@ private fun DetailHeaderCard(report: ReportUi) {
                         imageVector = Icons.Outlined.CalendarToday,
                         contentDescription = null,
                         modifier = Modifier.size(16.dp),
-                        tint = Color(0xFF8A8A8A)
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(text = "Updated today at 10:24 AM", style = MaterialTheme.typography.bodySmall, color = Color(0xFF8A8A8A))
+                    Text(
+                        text = "Updated today at 10:24 AM",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     PriorityChip(priority = report.priority)
@@ -270,29 +279,29 @@ private fun DescriptionCard(description: String) {
                 Text(
                     text = "Inspection notes show stress fractures around the intake housing. Pressure dropped to",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF666666)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Surface(
                     shape = RoundedCornerShape(16.dp),
-                    color = Color(0xFFFFF4E5)
+                    color = DraftBg
                 ) {
                     Text(
                         text = "2 PSI",
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                         style = AppTextStyles.ChipText,
-                        color = Color(0xFFB36B00)
+                        color = DraftText
                     )
                 }
                 Text(
                     text = "during load testing.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF666666)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodySmall,
-                color = Color(0xFF8A8A8A)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

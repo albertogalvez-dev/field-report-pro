@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddAPhoto
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -65,7 +66,7 @@ private fun AttachmentThumbnail(
         modifier = Modifier
             .size(74.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFFECECEC))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .clickable { onClick() }
     ) {
         AsyncImage(
@@ -78,7 +79,7 @@ private fun AttachmentThumbnail(
             Box(
                 modifier = Modifier
                     .matchParentSize()
-                    .background(Color.Black.copy(alpha = 0.55f)),
+                    .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.55f)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -93,6 +94,7 @@ private fun AttachmentThumbnail(
 
 @Composable
 private fun AttachmentAddTile(onClick: () -> Unit) {
+    val outline = MaterialTheme.colorScheme.outline
     Box(
         modifier = Modifier
             .size(74.dp)
@@ -103,7 +105,7 @@ private fun AttachmentAddTile(onClick: () -> Unit) {
                     pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 8f), 0f)
                 )
                 drawRoundRect(
-                    color = Color(0xFFD0D0D0),
+                    color = outline,
                     style = stroke,
                     cornerRadius = androidx.compose.ui.geometry.CornerRadius(16.dp.toPx())
                 )

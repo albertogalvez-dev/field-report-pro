@@ -18,7 +18,8 @@ private val LightColorScheme = lightColorScheme(
     onBackground = TextMain,
     surface = SurfaceLight,
     onSurface = TextMain,
-    surfaceVariant = Color(0xFFF1F1F1),
+    surfaceVariant = SurfaceVariantLight,
+    onSurfaceVariant = TextSub,
     outline = SoftDivider
 )
 
@@ -32,6 +33,7 @@ private val DarkColorScheme = darkColorScheme(
     surface = SurfaceDark,
     onSurface = Color.White,
     surfaceVariant = DarkSurfaceElevated,
+    onSurfaceVariant = Color(0xFFBFC7CE),
     outline = DarkOutline
 )
 

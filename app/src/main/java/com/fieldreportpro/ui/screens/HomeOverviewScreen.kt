@@ -28,7 +28,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview
@@ -164,7 +163,11 @@ internal fun HomeOverviewContent(
                 .align(Alignment.BottomEnd)
                 .padding(24.dp)
         ) {
-            Icon(imageVector = Icons.Outlined.Add, contentDescription = null, tint = Color.White)
+            Icon(
+                imageVector = Icons.Outlined.Add,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
         }
     }
 }

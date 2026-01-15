@@ -115,7 +115,7 @@ internal fun SyncCenterContent(
                                 modifier = Modifier
                                     .size(8.dp)
                                     .background(
-                                        if (uiState.systemOnline) PrimaryGreen else Color(0xFFD32F2F),
+                                        if (uiState.systemOnline) PrimaryGreen else MaterialTheme.colorScheme.error,
                                         androidx.compose.foundation.shape.CircleShape
                                     )
                             )
@@ -196,13 +196,17 @@ private fun SyncQueueItemCard(
                     contentDescription = null,
                     tint = when (item.status) {
                         SyncItemStatus.Uploading -> PrimaryGreen
-                        SyncItemStatus.Failed -> Color(0xFFD32F2F)
-                        SyncItemStatus.Waiting -> Color(0xFF7A7A7A)
+                        SyncItemStatus.Failed -> MaterialTheme.colorScheme.error
+                        SyncItemStatus.Waiting -> MaterialTheme.colorScheme.onSurfaceVariant
                     }
                 )
             }
             Spacer(modifier = Modifier.height(6.dp))
-            Text(text = item.subtitle, style = MaterialTheme.typography.bodySmall, color = Color(0xFF8A8A8A))
+            Text(
+                text = item.subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
             if (item.status == SyncItemStatus.Uploading) {
                 item.progress?.let { progress ->
                     Spacer(modifier = Modifier.height(10.dp))
@@ -226,7 +230,7 @@ private fun SnackbarCard(message: String, modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier,
         shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
-        color = Color(0xFF2E2E2E)
+        color = MaterialTheme.colorScheme.inverseSurface
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
@@ -235,10 +239,14 @@ private fun SnackbarCard(message: String, modifier: Modifier = Modifier) {
             Icon(
                 imageVector = Icons.Outlined.CheckCircle,
                 contentDescription = null,
-                tint = Color.White
+                tint = MaterialTheme.colorScheme.inverseOnSurface
             )
             Spacer(modifier = Modifier.size(8.dp))
-            Text(text = message, color = Color.White, style = MaterialTheme.typography.bodySmall)
+            Text(
+                text = message,
+                color = MaterialTheme.colorScheme.inverseOnSurface,
+                style = MaterialTheme.typography.bodySmall
+            )
         }
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -90,8 +91,8 @@ fun FilterChip(
     modifier: Modifier = Modifier
 ) {
     val container = if (selected) SyncedBg else Color.Transparent
-    val content = if (selected) SyncedText else Color(0xFF4A4A4A)
-    val border = if (selected) SyncedText else Color(0xFFDADADA)
+    val content = if (selected) SyncedText else MaterialTheme.colorScheme.onSurfaceVariant
+    val border = if (selected) SyncedText else MaterialTheme.colorScheme.outline
     Surface(
         modifier = modifier
             .clickable { onClick() },

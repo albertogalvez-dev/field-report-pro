@@ -111,19 +111,23 @@ private fun TimelineEventRow(
                     modifier = Modifier
                         .width(2.dp)
                         .height(32.dp)
-                        .background(Color(0xFFE0E0E0))
+                        .background(MaterialTheme.colorScheme.outline)
                 )
             }
         }
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(text = event.title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
-            Text(text = event.subtitle, style = MaterialTheme.typography.bodySmall, color = Color(0xFF8A8A8A))
+            Text(
+                text = event.subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
         Text(
             text = event.timeLabel,
             style = MaterialTheme.typography.bodySmall,
-            color = Color(0xFF8A8A8A)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

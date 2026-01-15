@@ -43,7 +43,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import android.content.res.Configuration
 import androidx.compose.ui.tooling.preview.Preview
@@ -240,25 +239,32 @@ internal fun ReportFormContent(
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = PrimaryGreen,
-                            unfocusedBorderColor = Color(0xFFE0E0E0),
-                            errorBorderColor = Color(0xFFD32F2F)
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            errorBorderColor = MaterialTheme.colorScheme.error
                         )
                     )
                     if (showError && reportTitle.isBlank()) {
                         Text(
                             text = "Report title is required.",
-                            color = Color(0xFFD32F2F),
+                            color = MaterialTheme.colorScheme.error,
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text(text = "Category", style = AppTextStyles.Body, color = Color(0xFF6F6F6F))
+                    Text(
+                        text = "Category",
+                        style = AppTextStyles.Body,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                     Spacer(modifier = Modifier.height(6.dp))
                     Box {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(Color(0xFFF6F6F6), RoundedCornerShape(12.dp))
+                                .background(
+                                    MaterialTheme.colorScheme.surfaceVariant,
+                                    RoundedCornerShape(12.dp)
+                                )
                                 .padding(horizontal = 12.dp, vertical = 10.dp)
                                 .clickable { onCategoryExpandedChange(true) },
                             verticalAlignment = Alignment.CenterVertically
@@ -348,7 +354,10 @@ internal fun ReportFormContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(140.dp)
-                            .background(Color(0xFFEAEAEA), RoundedCornerShape(16.dp))
+                            .background(
+                                MaterialTheme.colorScheme.surfaceVariant,
+                                RoundedCornerShape(16.dp)
+                            )
                     ) {
                         AsyncImage(
                             model = DemoAssets.mapPreviewUri,
@@ -385,7 +394,7 @@ internal fun ReportFormContent(
                         Text(
                             text = "$attachmentsCount Files",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFF7A7A7A)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     Spacer(modifier = Modifier.height(12.dp))
@@ -434,8 +443,8 @@ private fun PrioritySegment(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val background = if (selected) PrimaryGreen else Color(0xFFF4F4F4)
-    val contentColor = if (selected) Color.White else Color(0xFF5A5A5A)
+    val background = if (selected) PrimaryGreen else MaterialTheme.colorScheme.surfaceVariant
+    val contentColor = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
     Box(
         modifier = modifier
             .background(background, RoundedCornerShape(20.dp))
@@ -454,7 +463,7 @@ private fun BoxScope.SurfaceLabel(text: String) {
             .padding(12.dp)
             .align(Alignment.BottomStart),
         shape = RoundedCornerShape(20.dp),
-        color = Color.White.copy(alpha = 0.85f)
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
     ) {
         Text(
             text = text,
@@ -494,7 +503,7 @@ private fun BottomActionBar(
                     Icon(
                         imageVector = Icons.Outlined.Sync,
                         contentDescription = null,
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(18.dp)
                     )
                 },
