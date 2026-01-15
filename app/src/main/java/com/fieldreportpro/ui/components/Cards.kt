@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -186,25 +187,31 @@ fun ReportActivityCard(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
     ) {
-        Box(modifier = Modifier.padding(AppDimens.Spacing16)) {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(text = report.title, style = MaterialTheme.typography.titleMedium)
-                Text(text = report.location, style = MaterialTheme.typography.bodySmall, color = TextSub)
+        Column(
+            modifier = Modifier.padding(AppDimens.Spacing16),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = report.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f)
+                )
+                PriorityChip(priority = report.priority)
             }
-            Text(
-                text = report.updatedLabel,
-                style = MaterialTheme.typography.bodySmall,
-                color = TextSub,
-                modifier = Modifier.align(Alignment.CenterEnd)
-            )
-            PriorityChip(
-                priority = report.priority,
-                modifier = Modifier.align(Alignment.TopEnd)
-            )
-            StatusChip(
-                status = report.status,
-                modifier = Modifier.align(Alignment.BottomStart)
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = report.location, style = MaterialTheme.typography.bodySmall, color = TextSub)
+                Text(text = report.updatedLabel, style = MaterialTheme.typography.bodySmall, color = TextSub)
+            }
+            StatusChip(status = report.status)
         }
     }
 }
