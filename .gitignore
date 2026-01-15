@@ -9,3 +9,6 @@
 # APK/AAB
 *.apk
 *.aab
+
+# Screenshot staging
+.screenshots_staging/

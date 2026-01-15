@@ -1,4 +1,4 @@
-# Field Report Pro
+﻿# Field Report Pro
 [![CI](https://github.com/albertogalvez-dev/field-report-pro/actions/workflows/ci.yml/badge.svg)](https://github.com/albertogalvez-dev/field-report-pro/actions/workflows/ci.yml)
 
 Offline-first field incident reporting app for Android.
@@ -16,15 +16,15 @@ Offline-first field incident reporting app for Android.
 
 | Home (Light) | Home (Dark) | Empty State |
 | --- | --- | --- |
-| ![Home Light](screenshots/home_light.png) | ![Home Dark](screenshots/home_dark.png) | ![Empty State](screenshots/empty_state.png) |
+| [![Home Light](screenshots/home_light.png)](screenshots/home_light.png) | [![Home Dark](screenshots/home_dark.png)](screenshots/home_dark.png) | [![Empty State](screenshots/empty_state.png)](screenshots/empty_state.png) |
 
 | New Report | Report Detail | Sync Center |
 | --- | --- | --- |
-| ![Form](screenshots/form.png) | ![Detail](screenshots/detail.png) | ![Sync](screenshots/sync.png) |
+| [![Form](screenshots/form.png)](screenshots/form.png) | [![Detail](screenshots/detail.png)](screenshots/detail.png) | [![Sync](screenshots/sync.png)](screenshots/sync.png) |
 
 | Settings (Dark) | Annotation (Dark) |
 | --- | --- |
-| ![Settings Dark](screenshots/settings_dark.png) | ![Annotation Dark](screenshots/annotate_dark.png) |
+| [![Settings Dark](screenshots/settings_dark.png)](screenshots/settings_dark.png) | [![Annotation Dark](screenshots/annotate_dark.png)](screenshots/annotate_dark.png) |
 
 ## Architecture
 
@@ -63,7 +63,7 @@ Offline-first field incident reporting app for Android.
 ## CI and reports
 
 - CI runs `assembleDebug`, `testDebugUnitTest`, and `verifyPaparazziDebug`.
-- Paparazzi reports are uploaded as a workflow artifact named `paparazzi-report` (Actions → run → Artifacts).
+- Paparazzi reports are uploaded as a workflow artifact named paparazzi-report (Actions -> run -> Artifacts).
 
 ## Troubleshooting
 
@@ -74,3 +74,4 @@ See `docs/TROUBLESHOOTING.md`. Build outputs are stored in `%USERPROFILE%\.field
 - Multi-select attachment management
 - Sync scheduling policies
 - Export/share report summary
+
