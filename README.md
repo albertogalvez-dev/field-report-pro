@@ -1,5 +1,5 @@
 # Field Report Pro
-![CI](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)
+[![CI](https://github.com/albertogalvez-dev/field-report-pro/actions/workflows/ci.yml/badge.svg)](https://github.com/albertogalvez-dev/field-report-pro/actions/workflows/ci.yml)
 
 Offline-first field incident reporting app for Android.
 
@@ -32,7 +32,7 @@ Offline-first field incident reporting app for Android.
 - Room + DataStore + WorkManager
 - See `docs/ARCHITECTURE.md`
 
-## Run locally (Windows)
+## Quick start (Windows)
 
 1) Configure the Android SDK:
 
@@ -46,19 +46,24 @@ Offline-first field incident reporting app for Android.
 ./gradlew assembleDebug
 ```
 
-## Generate screenshots
+3) Generate screenshots:
 
 ```
 ./scripts/record-screenshots.ps1
 ```
 
-## Tests
+4) Tests:
 
 ```
 ./gradlew testDebugUnitTest
 ./gradlew verifyPaparazziDebug
 ./scripts/test-ci.ps1
 ```
+
+## CI and reports
+
+- CI runs `assembleDebug`, `testDebugUnitTest`, and `verifyPaparazziDebug`.
+- Paparazzi reports are uploaded as a workflow artifact named `paparazzi-report` (Actions → run → Artifacts).
 
 ## Troubleshooting
 
